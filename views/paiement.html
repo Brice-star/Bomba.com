@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Paiement - BOMBA">
+    <title>Paiement - BOMBA</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        .payment-container {
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        
+        .payment-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+        }
+        
+        .order-summary {
+            background-color: var(--beige);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .order-total {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--vert-profond);
+            margin-top: 1rem;
+        }
+        
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .payment-method {
+            padding: 1rem;
+            border: 2px solid var(--gris-clair);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .payment-method:hover,
+        .payment-method.active {
+            border-color: var(--vert-profond);
+            background-color: rgba(46, 125, 50, 0.05);
+        }
+        
+        .payment-method-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-main">BOMBA</span>
+                <span class="logo-subtitle">by Lyne's Design</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="/#produits">Produits</a></li>
+                    <li><a href="/suivi">Suivi</a></li>
+                    <li><a href="/panier" class="cart-icon">
+                        🛒 Panier
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="text-center mb-lg">Finaliser votre commande</h1>
+        
+        <div class="payment-container">
+            <!-- Résumé de la commande -->
+            <div class="payment-section">
+                <h2 class="mb-md">Résumé de votre commande</h2>
+                <div id="orderSummary" class="order-summary">
+                    <!-- Rempli dynamiquement -->
+                </div>
+            </div>
+            
+            <!-- Informations de livraison -->
+            <div class="payment-section">
+                <h2 class="mb-md">Informations de livraison</h2>
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label for="nom">Nom complet *</label>
+                        <input type="text" id="nom" name="nom" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="telephone">Téléphone *</label>
+                        <input type="tel" id="telephone" name="telephone" required placeholder="+229 XX XX XX XX">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pays">Pays *</label>
+                        <select id="pays" name="pays" required>
+                            <option value="">Sélectionnez votre pays</option>
+                            <option value="Bénin">Bénin</option>
+                            <option value="Togo">Togo</option>
+                            <option value="Côte d'Ivoire">Côte d'Ivoire</option>
+                            <option value="Nigeria">Nigeria</option>
+                            <option value="Ghana">Ghana</option>
+                            <option value="Sénégal">Sénégal</option>
+                            <option value="Burkina Faso">Burkina Faso</option>
+                            <option value="Mali">Mali</option>
+                            <option value="France">France</option>
+                            <option value="Belgique">Belgique</option>
+                            <option value="Canada">Canada</option>
+                            <option value="États-Unis">États-Unis</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adresse">Adresse complète de livraison *</label>
+                        <textarea id="adresse" name="adresse" required placeholder="Numéro, rue, quartier, ville..."></textarea>
+                    </div>
+                    
+                    <!-- Honeypot - Piège invisible pour bots (ne pas toucher!) -->
+                    <input type="text" name="website" id="website" style="position: absolute; left: -9999px; width: 1px; height: 1px;" tabindex="-1" autocomplete="off">
+                    
+                    <div id="deliveryInfo" class="alert alert-info" style="display: none; margin-top: 1rem;">
+                        <p><strong>📦 Livraison estimée:</strong> <span id="deliveryDate"></span></p>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Méthodes de paiement -->
+            <div class="payment-section">
+                <h2 class="mb-md">Méthode de paiement</h2>
+                <div class="payment-methods">
+                    <div class="payment-method active" data-method="stripe">
+                        <div class="payment-method-icon">💳</div>
+                        <div>Carte bancaire</div>
+                    </div>
+                    <div class="payment-method" data-method="mobile">
+                        <div class="payment-method-icon">📱</div>
+                        <div>Mobile Money</div>
+                    </div>
+                    <div class="payment-method" data-method="wave">
+                        <div class="payment-method-icon">🌊</div>
+                        <div>Wave</div>
+                    </div>
+                </div>
+                
+                <div id="stripeCardElement" style="padding: 1rem; border: 2px solid var(--gris-clair); border-radius: 8px; margin-top: 1rem;">
+                    <!-- Stripe card element sera inséré ici -->
+                </div>
+                
+                <div id="cardErrors" class="alert alert-error hidden" style="margin-top: 1rem;"></div>
+                
+                <button type="button" id="validerCommandeBtn" class="btn btn-primary" style="width: 100%; margin-top: 2rem; font-size: 1.125rem; padding: 1rem;">
+                    Valider et Payer
+                </button>
+                
+                <p class="text-center mt-md" style="color: var(--marron-clair); font-size: 0.875rem;">
+                    🔒 Paiement sécurisé - Vos informations sont protégées
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <div style="display: flex; flex-direction: column; gap: 0;">
+                    <h3 style="margin-bottom: 0; line-height: 1;">À propos de BOMBA</h3>
+                    <p style="font-style: italic; font-size: 0.65rem; margin-top: -2px; margin-left: 2px; margin-bottom: 0.75rem; opacity: 0.85; font-family: 'Georgia', 'Times New Roman', serif;">by Lyne's Design</p>
+                </div>
+                <p>Votre boutique de référence pour des vêtements africains authentiques et modernes.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <p><a href="/">Accueil</a></p>
+                <p><a href="/#produits">Produits</a></p>
+                <p><a href="/suivi">Suivi de commande</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>📧 Email: contact@bomba.com</p>
+                <p>📱 Téléphone: +229 XX XX XX XX</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 BOMBA. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="/js/paiement.js"></script>
+</body>
+</html>

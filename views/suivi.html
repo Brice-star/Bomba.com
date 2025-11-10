@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Suivi de commande - BOMBA">
+    <title>Suivi de commande - BOMBA</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .tracking-container {
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        
+        .tracking-search {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+        }
+        
+        .tracking-result {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            display: none;
+        }
+        
+        .tracking-timeline {
+            position: relative;
+            padding-left: 3rem;
+            margin-top: 2rem;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--gris-clair);
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--gris-clair);
+        }
+        
+        .timeline-item.active::before {
+            background-color: var(--vert-profond);
+            box-shadow: 0 0 0 2px var(--vert-profond);
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: -2.1rem;
+            top: 20px;
+            width: 2px;
+            height: calc(100% - 20px);
+            background-color: var(--gris-clair);
+        }
+        
+        .timeline-item:last-child::after {
+            display: none;
+        }
+        
+        .timeline-item.active::after {
+            background-color: var(--vert-profond);
+        }
+        
+        .timeline-content h3 {
+            margin-bottom: 0.5rem;
+            color: var(--marron-fonce);
+        }
+        
+        .timeline-content p {
+            color: var(--marron-clair);
+            margin-bottom: 0;
+        }
+        
+        .order-details {
+            background-color: var(--beige);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        .detail-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .detail-line:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-main">BOMBA</span>
+                <span class="logo-subtitle">by Lyne's Design</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="/#produits">Produits</a></li>
+                    <li><a href="/suivi">Suivi</a></li>
+                    <li><a href="/panier" class="cart-icon">
+                        🛒 Panier
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="text-center mb-lg">Suivi de commande</h1>
+        
+        <div class="tracking-container">
+            <div class="tracking-search">
+                <h2 class="mb-md">Rechercher votre commande</h2>
+                <p style="color: var(--marron-clair); margin-bottom: 1.5rem;">
+                    Entrez votre numéro de commande pour suivre son état
+                </p>
+                <div class="search-bar">
+                    <input type="text" id="orderNumber" class="search-input" placeholder="Ex: BOMBA1699123456789">
+                    <button class="btn btn-primary" id="rechercherBtn">Rechercher</button>
+                </div>
+                <div id="trackingError" class="alert alert-error hidden" style="margin-top: 1rem;"></div>
+            </div>
+            
+            <div id="trackingResult" class="tracking-result">
+                <h2 class="mb-md">Détails de votre commande</h2>
+                
+                <div id="orderDetails" class="order-details">
+                    <!-- Rempli dynamiquement -->
+                </div>
+                
+                <h3 class="mb-md">État de la commande</h3>
+                
+                <div class="tracking-timeline">
+                    <div class="timeline-item" data-status="En cours">
+                        <div class="timeline-content">
+                            <h3>Commande reçue</h3>
+                            <p>Votre commande a été enregistrée avec succès</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item" data-status="Préparation">
+                        <div class="timeline-content">
+                            <h3>En préparation</h3>
+                            <p>Votre commande est en cours de préparation</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item" data-status="Expédiée">
+                        <div class="timeline-content">
+                            <h3>Expédiée</h3>
+                            <p>Votre commande a été expédiée et est en route</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item" data-status="Livrée">
+                        <div class="timeline-content">
+                            <h3>Livrée</h3>
+                            <p>Votre commande a été livrée avec succès</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info mt-lg">
+                    <p><strong>📦 Livraison estimée:</strong> <span id="estimatedDelivery"></span></p>
+                    <p style="margin-top: 0.5rem; margin-bottom: 0;">Pour toute question, contactez-nous au +229 XX XX XX XX</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <div style="display: flex; flex-direction: column; gap: 0;">
+                    <h3 style="margin-bottom: 0; line-height: 1;">À propos de BOMBA</h3>
+                    <p style="font-style: italic; font-size: 0.65rem; margin-top: -2px; margin-left: 2px; margin-bottom: 0.75rem; opacity: 0.85; font-family: 'Georgia', 'Times New Roman', serif;">by Lyne's Design</p>
+                </div>
+                <p>Votre boutique de référence pour des vêtements africains authentiques et modernes.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <p><a href="/">Accueil</a></p>
+                <p><a href="/#produits">Produits</a></p>
+                <p><a href="/suivi">Suivi de commande</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>📧 Email: contact@bomba.com</p>
+                <p>📱 Téléphone: +229 XX XX XX XX</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 BOMBA. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="/js/suivi.js"></script>
+</body>
+</html>

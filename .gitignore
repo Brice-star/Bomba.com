@@ -1,0 +1,38 @@
+# Fichiers et dossiers à ignorer
+
+# Variables d'environnement
+.env
+
+# Dépendances Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Fichiers IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+
+# Build
+dist/
+build/
+
+# Fichiers temporaires
+tmp/
+temp/
+*.tmp
+
+# Images uploadées (si vous ajoutez un système d'upload)
+public/images/uploads/

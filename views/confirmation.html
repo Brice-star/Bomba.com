@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Commande confirmée - BOMBA">
+    <title>Commande confirmée - BOMBA</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .confirmation-container {
+            max-width: 600px;
+            margin: 3rem auto;
+            text-align: center;
+        }
+        
+        .success-icon {
+            font-size: 6rem;
+            margin-bottom: 1rem;
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .confirmation-box {
+            background-color: white;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .order-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--vert-profond);
+            background-color: var(--beige);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 480px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-main">BOMBA</span>
+                <span class="logo-subtitle">by Lyne's Design</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="/#produits">Produits</a></li>
+                    <li><a href="/suivi">Suivi</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="confirmation-container">
+            <div class="confirmation-box">
+                <div class="success-icon">✅</div>
+                <h1 style="color: var(--vert-profond);">Commande confirmée !</h1>
+                <p style="font-size: 1.125rem; color: var(--marron-clair); margin: 1rem 0;">
+                    Merci pour votre achat ! Votre commande a été enregistrée avec succès.
+                </p>
+                
+                <div class="order-number">
+                    Numéro de commande:<br>
+                    <span id="orderNumber">--</span>
+                </div>
+                
+                <div class="alert alert-info" style="text-align: left;">
+                    <p><strong>📧 Email de confirmation</strong></p>
+                    <p style="margin-bottom: 0;">Un email de confirmation a été envoyé à votre adresse avec tous les détails de votre commande.</p>
+                </div>
+                
+                <div class="alert alert-success" style="text-align: left; margin-top: 1rem;">
+                    <p><strong>📦 Livraison estimée</strong></p>
+                    <p style="margin-bottom: 0;" id="deliveryEstimate">--</p>
+                </div>
+                
+                <p style="color: var(--marron-clair); margin-top: 1.5rem;">
+                    Vous pouvez suivre votre commande à tout moment en utilisant votre numéro de commande.
+                </p>
+                
+                <div class="action-buttons">
+                    <a href="/suivi" class="btn btn-primary">Suivre ma commande</a>
+                    <a href="/" class="btn btn-outline">Continuer mes achats</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <div style="display: flex; flex-direction: column; gap: 0;">
+                    <h3 style="margin-bottom: 0; line-height: 1;">À propos de BOMBA</h3>
+                    <p style="font-style: italic; font-size: 0.65rem; margin-top: -2px; margin-left: 2px; margin-bottom: 0.75rem; opacity: 0.85; font-family: 'Georgia', 'Times New Roman', serif;">by Lyne's Design</p>
+                </div>
+                <p>Votre boutique de référence pour des vêtements africains authentiques et modernes.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <p><a href="/">Accueil</a></p>
+                <p><a href="/#produits">Produits</a></p>
+                <p><a href="/suivi">Suivi de commande</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>📧 Email: contact@bomba.com</p>
+                <p>📱 Téléphone: +229 XX XX XX XX</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 BOMBA. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="/js/confirmation.js"></script>
+</body>
+</html>

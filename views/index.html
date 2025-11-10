@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BOMBA - Boutique de vêtements africains modernes et traditionnels. Découvrez nos collections de tenues béninoises élégantes.">
+    <meta name="keywords" content="vêtements africains, tenues béninoises, mode africaine, boubou, chemises africaines, BOMBA">
+    <title>BOMBA - Vêtements Africains Modernes et Élégants</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-main">BOMBA</span>
+                <span class="logo-subtitle">by Lyne's Design</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="#produits">Produits</a></li>
+                    <li><a href="/suivi">Suivi</a></li>
+                    <li><a href="/panier" class="cart-icon">
+                        🛒 Panier
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="text-center">Découvrez l'Élégance Africaine</h1>
+            <p class="text-center" style="font-size: 1.25rem; color: var(--marron-clair); margin-bottom: 2rem;">
+                Collections de vêtements traditionnels et modernes du Bénin et d'Afrique
+            </p>
+        </div>
+    </section>
+
+    <!-- Barre de recherche -->
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="searchInput" class="search-input" placeholder="Rechercher un produit...">
+            <button class="btn btn-primary" id="searchBtn">Rechercher</button>
+        </div>
+
+        <!-- Filtres -->
+        <div class="filters">
+            <h3>Filtrer les produits</h3>
+            <div class="filter-group">
+                <div class="filter-item">
+                    <label for="categorieFilter">Catégorie</label>
+                    <select id="categorieFilter" onchange="appliquerFiltres()">
+                        <option value="">Toutes les catégories</option>
+                        <option value="Hommes">Hommes</option>
+                        <option value="Femmes">Femmes</option>
+                        <option value="Enfants">Enfants</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="tailleFilter">Taille</label>
+                    <select id="tailleFilter" onchange="appliquerFiltres()">
+                        <option value="">Toutes les tailles</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="prixMinFilter">Prix minimum (FCFA)</label>
+                    <input type="number" id="prixMinFilter" placeholder="0" onchange="appliquerFiltres()">
+                </div>
+                <div class="filter-item">
+                    <label for="prixMaxFilter">Prix maximum (FCFA)</label>
+                    <input type="number" id="prixMaxFilter" placeholder="100000" onchange="appliquerFiltres()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Grille de produits -->
+        <section id="produits">
+            <h2 class="text-center mb-lg">Nos Produits</h2>
+            <div id="productGrid" class="product-grid">
+                <!-- Les produits seront chargés dynamiquement ici -->
+                <div class="loader"></div>
+            </div>
+            <div id="noProducts" class="text-center hidden" style="padding: 3rem;">
+                <p style="font-size: 1.25rem; color: var(--marron-clair);">Aucun produit trouvé</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <div style="display: flex; flex-direction: column; gap: 0;">
+                    <h3 style="margin-bottom: 0; line-height: 1;">À propos de BOMBA</h3>
+                    <p style="font-style: italic; font-size: 0.65rem; margin-top: -2px; margin-left: 2px; margin-bottom: 0.75rem; opacity: 0.85; font-family: 'Georgia', 'Times New Roman', serif;">by Lyne's Design</p>
+                </div>
+                <p>Votre boutique de référence pour des vêtements africains authentiques et modernes, alliant tradition et élégance contemporaine.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <p><a href="/">Accueil</a></p>
+                <p><a href="#produits">Produits</a></p>
+                <p><a href="/suivi">Suivi de commande</a></p>
+                <p><a href="/admin/login">Admin</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>📧 Email: contact@bomba.com</p>
+                <p>📱 Téléphone: +229 XX XX XX XX</p>
+                <p>📍 Adresse: Cotonou, Bénin</p>
+            </div>
+            <div class="footer-section">
+                <h3>Suivez-nous</h3>
+                <p><a href="#">Facebook</a></p>
+                <p><a href="#">Instagram</a></p>
+                <p><a href="#">WhatsApp</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 BOMBA. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

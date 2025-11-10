@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Votre panier - BOMBA">
+    <title>Panier - BOMBA</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .cart-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+        }
+        
+        .cart-item {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+            display: grid;
+            grid-template-columns: 120px 1fr auto;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .cart-item-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            background-color: var(--gris-clair);
+        }
+        
+        .cart-item-info h3 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .cart-item-details {
+            color: var(--marron-clair);
+            margin-bottom: 0.5rem;
+        }
+        
+        .cart-item-actions {
+            text-align: right;
+        }
+        
+        .cart-item-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--vert-profond);
+            margin-bottom: 1rem;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+        
+        .quantity-controls button {
+            width: 30px;
+            height: 30px;
+            border: 2px solid var(--gris-clair);
+            background-color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        
+        .quantity-controls button:hover {
+            border-color: var(--vert-profond);
+            color: var(--vert-profond);
+        }
+        
+        .cart-summary {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            margin-top: 2rem;
+        }
+        
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 1.125rem;
+        }
+        
+        .summary-total {
+            border-top: 2px solid var(--gris-clair);
+            padding-top: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--vert-profond);
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        
+        .empty-cart-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .cart-item {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .cart-item-image {
+                margin: 0 auto;
+            }
+            
+            .cart-item-actions {
+                text-align: center;
+            }
+            
+            .quantity-controls {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-main">BOMBA</span>
+                <span class="logo-subtitle">by Lyne's Design</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="/#produits">Produits</a></li>
+                    <li><a href="/suivi">Suivi</a></li>
+                    <li><a href="/panier" class="cart-icon">
+                        🛒 Panier
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="text-center mb-lg">Votre Panier</h1>
+        
+        <div class="cart-container">
+            <div id="cartItems">
+                <!-- Les articles du panier seront affichés ici -->
+            </div>
+            
+            <div id="emptyCart" class="empty-cart hidden">
+                <div class="empty-cart-icon">🛒</div>
+                <h2>Votre panier est vide</h2>
+                <p style="color: var(--marron-clair); margin: 1rem 0 2rem;">Ajoutez des produits pour commencer vos achats</p>
+                <a href="/" class="btn btn-primary">Continuer mes achats</a>
+            </div>
+            
+            <div id="cartSummary" class="cart-summary hidden">
+                <h2 class="mb-md">Résumé de la commande</h2>
+                <div class="summary-line">
+                    <span>Sous-total:</span>
+                    <span id="subtotal">0 FCFA</span>
+                </div>
+                <div class="summary-line">
+                    <span>Livraison:</span>
+                    <span>Gratuite</span>
+                </div>
+                <div class="summary-line summary-total">
+                    <span>Total:</span>
+                    <span id="total">0 FCFA</span>
+                </div>
+                <button class="btn btn-primary" id="procederPaiementBtn" style="width: 100%; margin-top: 1.5rem;">
+                    Procéder au paiement
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <div style="display: flex; flex-direction: column; gap: 0;">
+                    <h3 style="margin-bottom: 0; line-height: 1;">À propos de BOMBA</h3>
+                    <p style="font-style: italic; font-size: 0.65rem; margin-top: -2px; margin-left: 2px; margin-bottom: 0.75rem; opacity: 0.85; font-family: 'Georgia', 'Times New Roman', serif;">by Lyne's Design</p>
+                </div>
+                <p>Votre boutique de référence pour des vêtements africains authentiques et modernes.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <p><a href="/">Accueil</a></p>
+                <p><a href="/#produits">Produits</a></p>
+                <p><a href="/suivi">Suivi de commande</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>📧 Email: contact@bomba.com</p>
+                <p>📱 Téléphone: +229 XX XX XX XX</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 BOMBA. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="/js/panier.js"></script>
+</body>
+</html>

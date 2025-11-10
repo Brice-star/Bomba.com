@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - BOMBA</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <!-- Bouton menu mobile -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu">
+        ☰
+    </button>
+    
+    <!-- Overlay pour fermer le menu -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="admin-logo">BOMBA Admin</div>
+            <nav class="admin-nav">
+                <a href="#" class="admin-nav-item active" data-section="statistiques">
+                    📊 Statistiques
+                </a>
+                <a href="#" class="admin-nav-item" data-section="commandes">
+                    📦 Commandes
+                </a>
+                <a href="#" class="admin-nav-item" data-section="produits">
+                    👔 Produits
+                </a>
+                <a href="#" class="admin-nav-item" id="deconnexionBtn">
+                    🚪 Déconnexion
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Contenu principal -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1 id="sectionTitle">Statistiques</h1>
+                <div class="admin-user">
+                    Administrateur
+                </div>
+            </header>
+
+            <!-- Section Statistiques -->
+            <section id="section-statistiques" class="admin-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalVentes">0</div>
+                            <div class="stat-label">Total Ventes</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="commandesEnAttente">0</div>
+                            <div class="stat-label">En attente</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="revenusTotal">0 FCFA</div>
+                            <div class="stat-label">Revenus total</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👔</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="produitsTotal">0</div>
+                            <div class="stat-label">Produits</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Commandes -->
+            <section id="section-commandes" class="admin-section hidden">
+                <div class="section-header">
+                    <h2>Gestion des commandes</h2>
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="all">Toutes</button>
+                        <button class="filter-tab" data-filter="En cours">En cours</button>
+                        <button class="filter-tab" data-filter="Préparation">Préparation</button>
+                        <button class="filter-tab" data-filter="Expédiée">Expédiées</button>
+                        <button class="filter-tab" data-filter="Livrée">Livrées</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>N° Commande</th>
+                                <th>Client</th>
+                                <th>Pays</th>
+                                <th>Montant</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="commandesTableBody">
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    <div class="loader"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Section Produits -->
+            <section id="section-produits" class="admin-section hidden">
+                <div class="section-header">
+                    <h2>Gestion des produits</h2>
+                    <button class="btn btn-primary" id="ajouterProduitBtn">
+                        + Ajouter un produit
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Nom</th>
+                                <th>Catégorie</th>
+                                <th>Prix</th>
+                                <th>Tailles</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="produitsTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <div class="loader"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Détails Commande -->
+    <div id="modalCommande" class="modal hidden">
+        <div class="modal-content">
+            <span class="modal-close" data-modal="modalCommande">&times;</span>
+            <h2 class="mb-md">Détails de la commande</h2>
+            <div id="detailsCommande"></div>
+        </div>
+    </div>
+
+    <!-- Modal Ajout/Modification Produit -->
+    <div id="modalProduit" class="modal hidden">
+        <div class="modal-content">
+            <span class="modal-close" data-modal="modalProduit">&times;</span>
+            <h2 class="mb-md" id="modalProduitTitle">Ajouter un produit</h2>
+            <form id="produitForm">
+                <input type="hidden" id="produitId">
+                
+                <div class="form-group">
+                    <label for="produitNom">Nom du produit *</label>
+                    <input type="text" id="produitNom" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="produitDescription">Description *</label>
+                    <textarea id="produitDescription" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="produitPrix">Prix (FCFA) *</label>
+                    <input type="number" id="produitPrix" required min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="produitCategorie">Catégorie *</label>
+                    <select id="produitCategorie" required>
+                        <option value="">Sélectionner...</option>
+                        <option value="Hommes">Hommes</option>
+                        <option value="Femmes">Femmes</option>
+                        <option value="Enfants">Enfants</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="produitImagePrincipale">Image principale (URL) *</label>
+                    <input type="text" id="produitImagePrincipale" required placeholder="/images/products/nom-produit.jpg">
+                </div>
+                
+                <div class="form-group">
+                    <label for="produitImagesSecondaires">Images secondaires (URLs séparées par des virgules)</label>
+                    <input type="text" id="produitImagesSecondaires" placeholder="/images/products/img1.jpg,/images/products/img2.jpg">
+                </div>
+                
+                <div class="form-group">
+                    <label>Tailles disponibles *</label>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" class="taille-checkbox" value="S"> S
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" class="taille-checkbox" value="M"> M
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" class="taille-checkbox" value="L"> L
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" class="taille-checkbox" value="XL"> XL
+                        </label>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Sauvegarder</button>
+                    <button type="button" class="btn btn-secondary" id="annulerProduitBtn" style="flex: 1;">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/admin.js"></script>
+    <script>
+        // Gestion du menu mobile
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const adminSidebar = document.getElementById('adminSidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const navItems = document.querySelectorAll('.admin-nav-item');
+        
+        function toggleMobileMenu() {
+            adminSidebar.classList.toggle('mobile-open');
+            sidebarOverlay.classList.toggle('active');
+        }
+        
+        function closeMobileMenu() {
+            adminSidebar.classList.remove('mobile-open');
+            sidebarOverlay.classList.remove('active');
+        }
+        
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        sidebarOverlay.addEventListener('click', closeMobileMenu);
+        
+        // Fermer le menu lors du clic sur un item de navigation
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    closeMobileMenu();
+                }
+            });
+        });
+        
+        // Fermer le menu lors du redimensionnement au-dessus de 768px
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                closeMobileMenu();
+            }
+        });
+    </script>
+</body>
+</html>

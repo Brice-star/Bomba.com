@@ -1,0 +1,647 @@
+/* ================================================
+   BOMBA E-COMMERCE - STYLES GLOBAUX
+   Palette africaine moderne et élégante
+   ================================================ */
+
+:root {
+    /* Palette de couleurs africaines modernes */
+    --marron-fonce: #3E2723;
+    --marron-clair: #8D6E63;
+    --beige: #D7CCC8;
+    --vert-profond: #2E7D32;
+    --vert-clair: #4CAF50;
+    --blanc-casse: #FAFAFA;
+    --noir: #1A1A1A;
+    --gris-clair: #EEEEEE;
+    --orange-terre: #BF6B04;
+    
+    /* Typographie */
+    --font-principale: 'Poppins', 'Montserrat', sans-serif;
+    
+    /* Espacements */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* Ombres */
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 8px rgba(0,0,0,0.15);
+    --shadow-lg: 0 8px 16px rgba(0,0,0,0.2);
+    
+    /* Transitions */
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-principale);
+    background-color: var(--blanc-casse);
+    color: var(--noir);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* ================================================
+   TYPOGRAPHIE
+   ================================================ */
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--marron-fonce);
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+p {
+    margin-bottom: var(--spacing-sm);
+}
+
+a {
+    text-decoration: none;
+    color: var(--vert-profond);
+}
+
+a:hover {
+    color: var(--vert-clair);
+}
+
+/* ================================================
+   HEADER & NAVIGATION
+   ================================================ */
+
+header {
+    background: linear-gradient(135deg, var(--marron-fonce) 0%, var(--marron-clair) 100%);
+    color: white;
+    padding: var(--spacing-sm) 0;
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.logo-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--beige);
+    letter-spacing: 2px;
+    line-height: 1;
+}
+
+.logo-subtitle {
+    font-size: 0.65rem;
+    font-weight: 400;
+    color: var(--beige);
+    letter-spacing: 0.5px;
+    opacity: 0.85;
+    font-style: italic;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    margin-top: -2px;
+    margin-left: 2px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: var(--spacing-lg);
+}
+
+nav a {
+    color: white;
+    font-weight: 500;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 4px;
+}
+
+nav a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.cart-icon {
+    position: relative;
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: var(--orange-terre);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* ================================================
+   CONTENEUR PRINCIPAL
+   ================================================ */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-lg) var(--spacing-md);
+}
+
+/* ================================================
+   BOUTONS
+   ================================================ */
+
+.btn {
+    display: inline-block;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-principale);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+    transition: opacity 0.2s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--vert-profond) 0%, var(--vert-clair) 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+.btn-secondary {
+    background-color: var(--marron-clair);
+    color: white;
+}
+
+.btn-secondary:hover {
+    opacity: 0.9;
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--vert-profond);
+    color: var(--vert-profond);
+}
+
+.btn-outline:hover {
+    background-color: var(--vert-profond);
+    color: white;
+}
+
+.btn-danger {
+    background-color: #d32f2f;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #b71c1c;
+}
+
+/* ================================================
+   CARTES PRODUITS
+   ================================================ */
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+}
+
+.product-card {
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    will-change: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.product-card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.product-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    background-color: var(--gris-clair);
+    display: block;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.product-info {
+    padding: var(--spacing-md);
+}
+
+.product-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--marron-fonce);
+    margin-bottom: var(--spacing-xs);
+}
+
+.product-category {
+    font-size: 0.875rem;
+    color: var(--marron-clair);
+    margin-bottom: var(--spacing-xs);
+}
+
+.product-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--vert-profond);
+    margin: var(--spacing-sm) 0;
+}
+
+.product-sizes {
+    display: flex;
+    gap: var(--spacing-xs);
+    margin: var(--spacing-sm) 0;
+}
+
+.size-badge {
+    padding: 0.25rem 0.5rem;
+    background-color: var(--beige);
+    color: var(--marron-fonce);
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Actions produits (boutons) */
+.product-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.product-actions .btn-voir-produit {
+    flex: 1;
+}
+
+.btn-icon {
+    width: 50px;
+    height: 45px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    border: 2px solid var(--marron-fonce);
+    background-color: white;
+    color: var(--marron-fonce);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-icon:hover {
+    background-color: var(--marron-fonce);
+    transform: scale(1.05);
+}
+
+/* ================================================
+   FORMULAIRES
+   ================================================ */
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: 600;
+    color: var(--marron-fonce);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input,
+textarea,
+select {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 2px solid var(--gris-clair);
+    border-radius: 8px;
+    font-family: var(--font-principale);
+    font-size: 1rem;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--vert-profond);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* ================================================
+   BARRE DE RECHERCHE
+   ================================================ */
+
+.search-bar {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.search-input {
+    flex: 1;
+}
+
+/* ================================================
+   FILTRES
+   ================================================ */
+
+.filters {
+    background-color: white;
+    padding: var(--spacing-md);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.filter-group {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.filter-item {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* ================================================
+   MESSAGES & ALERTES
+   ================================================ */
+
+.alert {
+    padding: var(--spacing-md);
+    border-radius: 8px;
+    margin-bottom: var(--spacing-md);
+}
+
+.alert-success {
+    background-color: #c8e6c9;
+    color: #1b5e20;
+    border-left: 4px solid var(--vert-profond);
+}
+
+.alert-error {
+    background-color: #ffcdd2;
+    color: #b71c1c;
+    border-left: 4px solid #d32f2f;
+}
+
+.alert-info {
+    background-color: #bbdefb;
+    color: #0d47a1;
+    border-left: 4px solid #1976d2;
+}
+
+/* ================================================
+   FOOTER
+   ================================================ */
+
+footer {
+    background-color: var(--marron-fonce);
+    color: white;
+    padding: var(--spacing-xl) 0 var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.footer-section h3 {
+    color: var(--beige);
+    margin-bottom: var(--spacing-md);
+}
+
+.footer-section p,
+.footer-section a {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: var(--spacing-xs);
+}
+
+.footer-section a:hover {
+    color: white;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* ================================================
+   LOADER
+   ================================================ */
+
+.loader {
+    border: 4px solid var(--gris-clair);
+    border-top: 4px solid var(--vert-profond);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: var(--spacing-lg) auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ================================================
+   RESPONSIVE
+   ================================================ */
+
+@media (max-width: 768px) {
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.75rem; }
+    h3 { font-size: 1.5rem; }
+    
+    .header-container {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    nav ul {
+        gap: var(--spacing-sm);
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: var(--spacing-md);
+    }
+    
+    .filter-group {
+        flex-direction: column;
+    }
+    
+    .filter-item {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .container {
+        padding: var(--spacing-md) var(--spacing-sm);
+    }
+}
+
+/* ================================================
+   UTILITAIRES
+   ================================================ */
+
+/* ================================================
+   HERO SECTION
+   ================================================ */
+
+.hero {
+    background: linear-gradient(135deg, var(--beige) 0%, var(--blanc-casse) 100%);
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Pattern africain géométrique (kente inspired) */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 30px,
+            rgba(62, 39, 35, 0.08) 30px,
+            rgba(62, 39, 35, 0.08) 32px,
+            transparent 32px,
+            transparent 62px
+        ),
+        repeating-linear-gradient(
+            -45deg,
+            transparent,
+            transparent 30px,
+            rgba(46, 125, 50, 0.06) 30px,
+            rgba(46, 125, 50, 0.06) 32px,
+            transparent 32px,
+            transparent 62px
+        );
+    pointer-events: none;
+}
+
+/* Cercles décoratifs (inspiration soleil africain) */
+.hero::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 15% 20%, rgba(191, 107, 4, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(46, 125, 50, 0.08) 0%, transparent 40%);
+    pointer-events: none;
+}
+
+.hero h1 {
+    color: var(--marron-fonce);
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.hero p {
+    position: relative;
+    z-index: 1;
+}
+
+/* ================================================
+   UTILITAIRES
+   ================================================ */
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+
+.hidden { display: none; }
+.visible { display: block; }

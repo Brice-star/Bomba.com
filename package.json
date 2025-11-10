@@ -1,0 +1,39 @@
+{
+  "name": "bomba-ecommerce",
+  "version": "1.0.0",
+  "description": "Site e-commerce BOMBA - Vente de tenues africaines modernes",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test-db": "node test-db.js",
+    "init-db": "node init-db.js"
+  },
+  "keywords": [
+    "ecommerce",
+    "african",
+    "clothing",
+    "bomba"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "dotenv-safe": "^9.1.0",
+    "express": "^4.18.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^8.2.1",
+    "express-session": "^1.17.3",
+    "express-validator": "^7.3.0",
+    "helmet": "^8.1.0",
+    "hpp": "^0.2.3",
+    "mysql2": "^3.6.5",
+    "stripe": "^14.25.0",
+    "uuid": "^13.0.0",
+    "xss-clean": "^0.1.4"
+  }
+}
