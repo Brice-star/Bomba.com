@@ -11,21 +11,28 @@
 .mobile-menu-toggle {
     display: none;
     position: fixed;
-    top: 1rem;
+    top: 1.15rem;
     left: 1rem;
-    z-index: 1000;
+    z-index: 1001;
     background: var(--marron-fonce);
     color: white;
     border: none;
-    padding: 0.75rem;
+    padding: 0.6rem;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1.5rem;
-    box-shadow: var(--shadow-md);
+    font-size: 1.2rem;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s ease;
+    line-height: 1;
 }
 
 .mobile-menu-toggle:hover {
     background: var(--marron-clair);
+    transform: scale(1.05);
+}
+
+.mobile-menu-toggle:active {
+    transform: scale(0.95);
 }
 
 .admin-sidebar {
@@ -446,19 +453,28 @@
     
     .admin-main {
         margin-left: 0;
-        padding-top: 4rem;
+        padding-top: 0;
     }
     
     .admin-header {
         padding: 1rem;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-        padding-top: 1rem;
+        padding-left: 4rem;
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 99;
     }
     
     .admin-header h1 {
         font-size: 1.5rem;
+        color: var(--marron-clair);
+    }
+    
+    .admin-user {
+        font-size: 0.9rem;
+        color: var(--marron-fonce);
     }
     
     .admin-section {
@@ -555,10 +571,10 @@
 
 @media (max-width: 480px) {
     .mobile-menu-toggle {
-        top: 0.75rem;
+        top: 0.9rem;
         left: 0.75rem;
-        padding: 0.6rem;
-        font-size: 1.25rem;
+        padding: 0.5rem;
+        font-size: 1.1rem;
     }
     
     .admin-sidebar {
@@ -575,15 +591,22 @@
     }
     
     .admin-main {
-        padding-top: 3.5rem;
+        padding-top: 0;
+    }
+    
+    .admin-header {
+        padding: 0.75rem;
+        padding-left: 3.5rem;
     }
     
     .admin-header h1 {
         font-size: 1.25rem;
+        color: var(--marron-clair);
     }
     
     .admin-user {
         font-size: 0.875rem;
+        color: var(--marron-fonce);
     }
     
     .stats-grid {
