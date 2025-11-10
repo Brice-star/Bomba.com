@@ -89,6 +89,22 @@ function afficherDetailProduit() {
                     </p>
                 </div>
                 
+                <!-- Section Authenticité & Disponibilité des tissus -->
+                <div style="background: linear-gradient(135deg, #f9f5f0 0%, #fef8f3 100%); 
+                            border-left: 4px solid var(--orange); 
+                            padding: 1.5rem; 
+                            margin-top: 2rem; 
+                            border-radius: 12px;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                        <span style="font-size: 1.75rem;">🪡</span>
+                        <h3 style="margin: 0; color: var(--marron-fonce);">Authenticité & Disponibilité des tissus</h3>
+                    </div>
+                    <p style="color: var(--marron-clair); line-height: 1.8; margin: 0; font-size: 0.95rem;">
+                        ${produitActuel.textile_disponibilite || 'Chaque tenue BOMBA est fabriquée à la main par des artisans locaux avec des tissus africains authentiques. En raison de la disponibilité variable des tissus sur le marché, le motif exact ou les couleurs peuvent légèrement différer du visuel présenté. Le modèle, la coupe et la qualité restent strictement identiques. Ces variations rendent chaque pièce unique et exclusive.'}
+                    </p>
+                </div>
+                
                 <div style="margin-top: 2rem;">
                     <h3>Taille</h3>
                     <div class="size-selector">

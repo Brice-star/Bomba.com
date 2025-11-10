@@ -179,6 +179,11 @@ app.get('/suivi', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'suivi.html'));
 });
 
+// Page CGV
+app.get('/cgv', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'cgv.html'));
+});
+
 // API: Créer une commande (avec protection honeypot)
 app.post('/api/commandes', antibot.honeypotCheck, async (req, res) => {
     try {
@@ -432,12 +437,12 @@ app.put('/api/admin/commandes/:id', checkAuth, async (req, res) => {
 // API: Ajouter un produit (admin)
 app.post('/api/admin/produits', checkAuth, async (req, res) => {
     try {
-        const { nom, description, prix, categorie, image_principale, images_secondaires, tailles_disponibles } = req.body;
+        const { nom, description, textile_disponibilite, prix, categorie, image_principale, images_secondaires, tailles_disponibles } = req.body;
         
         const [result] = await db.query(
-            `INSERT INTO produits (nom, description, prix, categorie, image_principale, images_secondaires, tailles_disponibles) 
-             VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [nom, description, prix, categorie, image_principale, images_secondaires, tailles_disponibles]
+            `INSERT INTO produits (nom, description, textile_disponibilite, prix, categorie, image_principale, images_secondaires, tailles_disponibles) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [nom, description, textile_disponibilite, prix, categorie, image_principale, images_secondaires, tailles_disponibles]
         );
         
         res.json({ success: true, produit_id: result.insertId });
@@ -450,12 +455,12 @@ app.post('/api/admin/produits', checkAuth, async (req, res) => {
 // API: Modifier un produit (admin)
 app.put('/api/admin/produits/:id', checkAuth, async (req, res) => {
     try {
-        const { nom, description, prix, categorie, image_principale, images_secondaires, tailles_disponibles } = req.body;
+        const { nom, description, textile_disponibilite, prix, categorie, image_principale, images_secondaires, tailles_disponibles } = req.body;
         
         await db.query(
-            `UPDATE produits SET nom = ?, description = ?, prix = ?, categorie = ?, 
+            `UPDATE produits SET nom = ?, description = ?, textile_disponibilite = ?, prix = ?, categorie = ?, 
              image_principale = ?, images_secondaires = ?, tailles_disponibles = ? WHERE id = ?`,
-            [nom, description, prix, categorie, image_principale, images_secondaires, tailles_disponibles, req.params.id]
+            [nom, description, textile_disponibilite, prix, categorie, image_principale, images_secondaires, tailles_disponibles, req.params.id]
         );
         
         res.json({ success: true });

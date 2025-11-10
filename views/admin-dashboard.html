@@ -183,6 +183,20 @@
                 </div>
                 
                 <div class="form-group">
+                    <label for="produitTextileDisponibilite">
+                        🪡 Authenticité & Disponibilité des tissus
+                        <span style="font-size: 0.85rem; color: var(--marron-clair); font-weight: normal;">
+                            (Message affiché sur la fiche produit)
+                        </span>
+                    </label>
+                    <textarea id="produitTextileDisponibilite" rows="4" 
+                              placeholder="Texte personnalisé ou laisser vide pour utiliser le message par défaut"></textarea>
+                    <small style="color: var(--marron-clair); font-size: 0.85rem; display: block; margin-top: 0.5rem;">
+                        💡 Si vide, le message par défaut sera utilisé. Ce champ apparaît automatiquement sous la description du produit.
+                    </small>
+                </div>
+                
+                <div class="form-group">
                     <label for="produitPrix">Prix (FCFA) *</label>
                     <input type="number" id="produitPrix" required min="0">
                 </div>

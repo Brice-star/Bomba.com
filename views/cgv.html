@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conditions Générales de Vente - BOMBA</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .cgv-container {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+        
+        .cgv-section {
+            margin-bottom: 3rem;
+        }
+        
+        .cgv-section h2 {
+            color: var(--marron-fonce);
+            border-bottom: 3px solid var(--orange);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cgv-section h3 {
+            color: var(--marron-clair);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cgv-section p, .cgv-section li {
+            line-height: 1.8;
+            color: var(--marron-clair);
+            margin-bottom: 1rem;
+        }
+        
+        .cgv-section ul {
+            padding-left: 2rem;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #f9f5f0 0%, #fef8f3 100%);
+            border-left: 4px solid var(--orange);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+        
+        .highlight-box p {
+            margin: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .cgv-container {
+                padding: 0 1rem;
+                margin: 2rem auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-main">BOMBA</span>
+                <span class="logo-subtitle">by Lyne's Design</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="/#produits">Produits</a></li>
+                    <li><a href="/suivi">Suivi</a></li>
+                    <li><a href="/panier" class="cart-icon">
+                        🛒 Panier
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="cgv-container">
+        <h1 style="text-align: center; color: var(--marron-fonce); margin-bottom: 3rem;">
+            Conditions Générales de Vente
+        </h1>
+        
+        <div class="cgv-section">
+            <h2>1. Objet</h2>
+            <p>
+                Les présentes Conditions Générales de Vente (CGV) régissent les ventes de vêtements et articles proposés 
+                par BOMBA by Lyne's Design sur le site web. Toute commande implique l'acceptation sans réserve des présentes CGV.
+            </p>
+        </div>
+        
+        <div class="cgv-section">
+            <h2>🪡 2. Authenticité des produits</h2>
+            <div class="highlight-box">
+                <p style="font-weight: 600; margin-bottom: 1rem;">
+                    Les modèles présentés sur le site BOMBA sont confectionnés à la main par des artisans locaux.
+                </p>
+                <p>
+                    En raison de la disponibilité variable des tissus africains authentiques sur le marché, 
+                    <strong>les motifs ou nuances de couleurs peuvent légèrement différer</strong> du visuel présenté 
+                    sans affecter la qualité ni la coupe du vêtement.
+                </p>
+                <p style="margin-top: 1rem;">
+                    <strong>Ces variations ne peuvent donner lieu à remboursement ou échange</strong>, 
+                    sauf défaut majeur de fabrication constaté. Elles témoignent du caractère artisanal et unique 
+                    de chaque pièce BOMBA.
+                </p>
+            </div>
+        </div>
+        
+        <div class="cgv-section">
+            <h2>3. Commandes</h2>
+            <h3>3.1 Processus de commande</h3>
+            <p>
+                Toute commande passe par les étapes suivantes :
+            </p>
+            <ul>
+                <li>Sélection des produits et ajout au panier</li>
+                <li>Validation du panier et saisie des informations de livraison</li>
+                <li>Choix du mode de paiement</li>
+                <li>Confirmation de la commande</li>
+            </ul>
+            
+            <h3>3.2 Validation de commande</h3>
+            <p>
+                La vente est considérée comme définitive après le paiement intégral et la réception d'un email 
+                de confirmation contenant le numéro de commande.
+            </p>
+        </div>
+        
+        <div class="cgv-section">
+            <h2>4. Prix et paiement</h2>
+            <h3>4.1 Prix</h3>
+            <p>
+                Les prix sont indiqués en Francs CFA (FCFA), toutes taxes comprises. 
+                BOMBA se réserve le droit de modifier ses prix à tout moment, mais les produits seront facturés 
+                sur la base des tarifs en vigueur au moment de la validation de la commande.
+            </p>
+            
+            <h3>4.2 Modalités de paiement</h3>
+            <p>
+                Le paiement s'effectue par carte bancaire via notre plateforme sécurisée Stripe. 
+                Le paiement est exigible immédiatement à la commande.
+            </p>
+        </div>
+        
+        <div class="cgv-section">
+            <h2>5. Livraison</h2>
+            <h3>5.1 Zones de livraison</h3>
+            <p>
+                Les livraisons sont effectuées à l'adresse indiquée lors de la commande. 
+                Il est de la responsabilité du client de fournir une adresse complète et exacte.
+            </p>
+            
+            <h3>5.2 Délais de livraison</h3>
+            <p>
+                Les délais de livraison varient selon la destination et sont indiqués à titre indicatif. 
+                BOMBA ne saurait être tenu responsable des retards de livraison imputables aux transporteurs.
+            </p>
+            
+            <h3>5.3 Réception de la commande</h3>
+            <p>
+                Il appartient au client de vérifier l'état du colis à réception et de signaler toute anomalie 
+                (produit manquant, endommagé) dans les 48 heures suivant la livraison.
+            </p>
+        </div>
+        
+        <div class="cgv-section">
+            <h2>6. Droit de rétractation</h2>
+            <p>
+                Conformément à la législation en vigueur, le client dispose d'un délai de 14 jours à compter 
+                de la réception de sa commande pour exercer son droit de rétractation sans avoir à justifier 
+                de motifs ni à payer de pénalités.
+            </p>
+            <p>
+                Les produits retournés doivent être dans leur état d'origine, non portés, non lavés, 
+                avec leurs étiquettes. Les frais de retour sont à la charge du client.
+            </p>
+            <p>
+                <strong>Exception :</strong> Les variations de tissus (motifs, nuances) mentionnées à l'article 2 
+                ne constituent pas un motif de rétractation.
+            </p>
+        </div>
+        
+        <div class="cgv-section">
+            <h2>7. Garantie et SAV</h2>
+            <p>
+                Tous les produits vendus par BOMBA bénéficient de la garantie légale de conformité. 
+                En cas de défaut de fabrication constaté, le client peut demander un échange ou un remboursement 
+                dans un délai de 30 jours suivant la réception.
+            </p>
+        </div>
+        
+        <div class="cgv-section">
+            <h2>8. Responsabilité</h2>
+            <p>
+                BOMBA ne saurait être tenu pour responsable de l'inexécution du contrat en cas de force majeure, 
+                de perturbation ou grève totale ou partielle des services postaux et moyens de transport.
+            </p>
+        </div>
+        
+        <div class="cgv-section">
+            <h2>9. Données personnelles</h2>
+            <p>
+                Les informations collectées lors de la commande sont nécessaires au traitement de celle-ci. 
+                Elles font l'objet d'un traitement informatique et sont destinées uniquement à BOMBA. 
+                Le client dispose d'un droit d'accès, de rectification et de suppression de ses données personnelles.
+            </p>
+        </div>
+        
+        <div class="cgv-section">
+            <h2>10. Litiges</h2>
+            <p>
+                En cas de litige, une solution amiable sera recherchée avant toute action judiciaire. 
+                À défaut, les tribunaux compétents seront ceux du ressort du siège social de BOMBA.
+            </p>
+        </div>
+        
+        <div style="text-align: center; margin: 3rem 0; color: var(--marron-clair);">
+            <p><strong>Date de dernière mise à jour : Novembre 2025</strong></p>
+            <p>Pour toute question concernant nos CGV, contactez-nous via notre formulaire de contact.</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <div style="display: flex; flex-direction: column; gap: 0;">
+                    <h3 style="margin-bottom: 0; line-height: 1;">À propos de BOMBA</h3>
+                    <p style="font-style: italic; font-size: 0.65rem; margin-top: -2px; margin-left: 2px; margin-bottom: 0.75rem; opacity: 0.85; font-family: 'Georgia', 'Times New Roman', serif;">by Lyne's Design</p>
+                </div>
+                <p>Votre boutique de référence pour des vêtements africains authentiques et modernes.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Liens utiles</h3>
+                <ul>
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="/#produits">Produits</a></li>
+                    <li><a href="/suivi">Suivi de commande</a></li>
+                    <li><a href="/cgv">CGV</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: contact@bomba.com</p>
+                <p>Tél: +229 XX XX XX XX</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2025 BOMBA by Lyne's Design. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

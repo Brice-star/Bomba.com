@@ -375,6 +375,7 @@ function modifierProduit(produitId) {
     document.getElementById('produitId').value = produit.id;
     document.getElementById('produitNom').value = produit.nom;
     document.getElementById('produitDescription').value = produit.description;
+    document.getElementById('produitTextileDisponibilite').value = produit.textile_disponibilite || '';
     document.getElementById('produitPrix').value = produit.prix;
     document.getElementById('produitCategorie').value = produit.categorie;
     document.getElementById('produitImagePrincipale').value = produit.image_principale;
@@ -402,9 +403,12 @@ async function sauvegarderProduit(event) {
         return;
     }
     
+    const textileDisponibilite = document.getElementById('produitTextileDisponibilite').value.trim();
+    
     const produitData = {
         nom: document.getElementById('produitNom').value,
         description: document.getElementById('produitDescription').value,
+        textile_disponibilite: textileDisponibilite || 'Chaque tenue BOMBA est fabriquée à la main par des artisans locaux avec des tissus africains authentiques. En raison de la disponibilité variable des tissus sur le marché, le motif exact ou les couleurs peuvent légèrement différer du visuel présenté. Le modèle, la coupe et la qualité restent strictement identiques. Ces variations rendent chaque pièce unique et exclusive.',
         prix: document.getElementById('produitPrix').value,
         categorie: document.getElementById('produitCategorie').value,
         image_principale: document.getElementById('produitImagePrincipale').value,
