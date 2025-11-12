@@ -157,8 +157,9 @@ if (config.isProduction) {
         // Only apply anti-bot for POST requests to sensitive endpoints
         if (req.method === 'POST' && (
             req.path.startsWith('/api/commandes') ||
-            req.path.startsWith('/api/admin') ||
-            req.path.startsWith('/api/stripe')
+            req.path.startsWith('/api/stripe') ||
+            // Apply to admin POSTs except login/logout and image uploads which must remain accessible
+            (req.path.startsWith('/api/admin') && !req.path.startsWith('/api/admin/login') && !req.path.startsWith('/api/admin/logout') && !req.path.startsWith('/api/admin/upload'))
         )) {
             // Run antibot checks sequentially
             antibot.ipBlacklist(req, res, (err) => {
