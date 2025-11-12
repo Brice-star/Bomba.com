@@ -268,6 +268,13 @@ app.use(express.static('public', {
 }));
 
 // Page d'accueil
+
+// Middleware pour forcer le JSON sur toutes les routes /api/*
+app.use('/api', (req, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+    next();
+});
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
