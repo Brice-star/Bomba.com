@@ -57,7 +57,7 @@ const isStaticAsset = (req) => {
 const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: process.env.NODE_ENV === 'production' ? 100 : 1000, // 1000 en dev, 100 en prod
-    message: 'Trop de requêtes depuis cette adresse IP, veuillez réessayer dans 15 minutes.',
+    message: { error: 'Trop de requêtes depuis cette adresse IP, veuillez réessayer dans 15 minutes.' },
     standardHeaders: true,
     legacyHeaders: false,
     skip: (req) => {
@@ -78,7 +78,7 @@ const generalLimiter = rateLimit({
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 5, // 5 tentatives max
-    message: 'Trop de tentatives de connexion, veuillez réessayer dans 15 minutes.',
+    message: { error: 'Trop de tentatives de connexion, veuillez réessayer dans 15 minutes.' },
     skipSuccessfulRequests: true,
 });
 
@@ -87,7 +87,7 @@ const apiLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minute
     // Allow a higher default in production but keep it configurable via API_RATE_LIMIT
     max: process.env.NODE_ENV === 'production' ? (process.env.API_RATE_LIMIT ? parseInt(process.env.API_RATE_LIMIT, 10) : 100) : 1000,
-    message: 'Trop de requêtes API, veuillez ralentir.',
+    message: { error: 'Trop de requêtes API, veuillez ralentir.' },
     // Skip rate limiting for safe static GET requests and health check
     skip: (req) => {
         if (isStaticAsset(req) && req.method === 'GET') return true;
@@ -100,7 +100,7 @@ const apiLimiter = rateLimit({
 const paymentLimiter = rateLimit({
     windowMs: 5 * 60 * 1000, // 5 minutes
     max: 3, // 3 paiements max toutes les 5 minutes
-    message: 'Trop de tentatives de paiement, veuillez réessayer dans quelques minutes.',
+    message: { error: 'Trop de tentatives de paiement, veuillez réessayer dans quelques minutes.' },
 });
 
 // CORS Configuration - Protection contre les requêtes cross-origin non autorisées
