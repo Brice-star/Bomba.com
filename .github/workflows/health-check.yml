@@ -1,0 +1,25 @@
+name: Health Check
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Health check
+        env:
+          HEALTH_URL: ${{ secrets.HEALTH_URL }}
+        run: |
+          if [ -z "$HEALTH_URL" ]; then
+            echo "ERROR: secrets.HEALTH_URL is not set. Set it in repository secrets to the public /health URL.";
+            exit 1;
+          fi
+          echo "Calling $HEALTH_URL";
+          status=$(curl -s -o /dev/stderr -w "%{http_code}" "$HEALTH_URL") || true
+          echo "HTTP status: $status"
+          if [ "$status" != "200" ]; then
+            echo "Health check failed with status $status";
+            exit 1;
+          fi
+          echo "Health check OK"
