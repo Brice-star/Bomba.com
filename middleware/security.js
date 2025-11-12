@@ -38,6 +38,21 @@ const helmetConfig = helmet({
     }
 });
 
+// Helper to identify static asset requests we want to exempt from rate limiting
+const isStaticAsset = (req) => {
+    try {
+        const p = (req.path || req.url || '').toLowerCase();
+        // Common public static prefixes
+        const staticPrefixes = ['/images', '/img', '/css', '/js', '/public', '/fonts', '/favicon.ico', '/sitemap.xml'];
+        if (staticPrefixes.some(pref => p.startsWith(pref))) return true;
+        // Allow health check to bypass limits
+        if (p === '/health' || p.startsWith('/health')) return true;
+        return false;
+    } catch (e) {
+        return false;
+    }
+};
+
 // Rate Limiting - Protection contre les attaques par force brute
 const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -49,8 +64,12 @@ const generalLimiter = rateLimit({
         // Skip rate limiting pour localhost en développement
         if (process.env.NODE_ENV !== 'production') {
             const ip = req.ip || req.connection.remoteAddress;
-            return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+            if (ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1') return true;
         }
+
+        // Exempt static assets and health checks from general rate limiting so public assets don't get blocked
+        if (isStaticAsset(req)) return true;
+
         return false;
     }
 });
@@ -66,8 +85,15 @@ const authLimiter = rateLimit({
 // Rate Limiting pour l'API
 const apiLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minute
-    max: 30, // 30 requêtes par minute
+    // Allow a higher default in production but keep it configurable via API_RATE_LIMIT
+    max: process.env.NODE_ENV === 'production' ? (process.env.API_RATE_LIMIT ? parseInt(process.env.API_RATE_LIMIT, 10) : 100) : 1000,
     message: 'Trop de requêtes API, veuillez ralentir.',
+    // Skip rate limiting for safe static GET requests and health check
+    skip: (req) => {
+        if (isStaticAsset(req) && req.method === 'GET') return true;
+        if ((req.path || req.url || '').startsWith('/images')) return true;
+        return false;
+    }
 });
 
 // Rate Limiting pour les paiements
