@@ -274,19 +274,9 @@ app.get('/', (req, res) => {
 
 // ==================== PROTECTION API ====================
 // Rate limiting sur toutes les routes API (sauf webhook et admin)
+// Rate limiting désactivé temporairement sur toutes les routes API pour debug
 app.use('/api', (req, res, next) => {
-    // Pas de rate limit sur le webhook Stripe
-    if (req.path === '/stripe/webhook') {
-        return next();
-    }
-    
-    // Rate limiting plus souple pour les admins authentifiés
-    if (req.path.startsWith('/admin/') && req.session?.adminLoggedIn) {
-        return next(); // Pas de rate limit pour les admins connectés
-    }
-    
-    // Appliquer le rate limiting pour le reste
-    security.apiLimiter(req, res, next);
+    return next();
 });
 
 // API: Récupérer tous les produits avec filtres
