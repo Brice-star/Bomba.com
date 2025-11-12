@@ -80,14 +80,17 @@ app.use((req, res, next) => {
             const fileName = req.path.split('/').pop();
             const filePath = path.join(__dirname, 'public', 'images', 'products', fileName);
             if (fs.existsSync(filePath)) {
+                console.log('🖼️ Image trouvée et servie:', filePath);
                 return res.sendFile(filePath);
             }
 
             // Serve placeholder if specific product image not found
             const placeholder = path.join(__dirname, 'public', 'images', 'products', 'placeholder.svg');
             if (fs.existsSync(placeholder)) {
+                console.log('🖼️ Image manquante, placeholder servi:', placeholder);
                 return res.sendFile(placeholder);
             }
+            console.warn('❌ Image et placeholder absents:', filePath);
             // If no placeholder, continue to static handler (will 404)
         }
     } catch (e) {
@@ -197,8 +200,17 @@ setTimeout(async () => {
 // ==================== CONFIGURATION UPLOAD D'IMAGES ====================
 // Créer le dossier uploads s'il n'existe pas
 const uploadDir = path.join(__dirname, 'public', 'images', 'products');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+try {
+    if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+        console.log('✅ Dossier upload images créé:', uploadDir);
+    } else {
+        // Vérifier droits écriture
+        fs.accessSync(uploadDir, fs.constants.W_OK);
+        console.log('✅ Dossier upload images existant et accessible:', uploadDir);
+    }
+} catch (err) {
+    console.error('❌ Erreur accès/création dossier upload images:', uploadDir, err && err.message ? err.message : err);
 }
 
 // Configuration de multer pour l'upload d'images
@@ -992,7 +1004,8 @@ app.post('/api/admin/upload-image', checkAuth, upload.single('image'), async (re
         if (!req.file) {
             return res.status(400).json({ error: 'Aucune image fournie' });
         }
-        
+        // Log upload
+        console.log('🖼️ Image uploadée:', req.file.filename, '->', req.file.path);
         // Retourner le chemin relatif de l'image
         const imagePath = `/images/products/${req.file.filename}`;
         res.json({ 
