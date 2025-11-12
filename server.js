@@ -143,8 +143,38 @@ app.use(session(sessionOptions));
 // IMPORTANT: Ces middlewares doivent être après la session car ils utilisent req.session
 // NOTE: Temporary hotfix — disable anti-bot in production to restore static asset access.
 if (config.isProduction) {
-    // Hotfix: fully disable anti-bot to avoid blocking images and health checks while debugging edge issues.
-    console.warn('⚠️ HOTFIX: Anti-bot temporairement DÉSACTIVÉ en production pour restauration du service');
+    // Enable targeted anti-bot protections in production only for sensitive POST endpoints.
+    // This avoids blocking public static assets and health checks while still protecting
+    // order creation, admin actions and payment webhooks.
+    app.use((req, res, next) => {
+        try {
+            // Skip static and health
+            if (security.isStaticAsset(req)) return next();
+        } catch (e) {
+            // ignore
+        }
+
+        // Only apply anti-bot for POST requests to sensitive endpoints
+        if (req.method === 'POST' && (
+            req.path.startsWith('/api/commandes') ||
+            req.path.startsWith('/api/admin') ||
+            req.path.startsWith('/api/stripe')
+        )) {
+            // Run antibot checks sequentially
+            antibot.ipBlacklist(req, res, (err) => {
+                if (err) return next(err);
+                antibot.botDetection(req, res, (err2) => {
+                    if (err2) return next(err2);
+                    antibot.behaviorAnalysis(req, res, next);
+                });
+            });
+            return;
+        }
+
+        next();
+    });
+
+    console.log('🛡️ Anti-bot (ciblé) activé en production');
 } else {
     console.log('⚠️ Anti-bot désactivé (Développement)');
 }
