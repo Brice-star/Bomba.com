@@ -316,6 +316,11 @@ function acheterMaintenant() {
         return;
     }
     
-    // Rediriger directement vers le panier sans ajouter de nouveau produit
-    window.location.href = '/panier';
+    // Ajouter le produit au panier d'abord
+    ajouterAuPanier();
+    
+    // Puis rediriger vers le panier après un court délai
+    setTimeout(() => {
+        window.location.href = '/panier';
+    }, 300);
 }

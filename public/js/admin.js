@@ -17,6 +17,8 @@ window.addEventListener('unhandledrejection', (e) => {
 let commandesData = [];
 let produitsData = [];
 let filtreStatutActuel = 'all';
+let autoRefreshInterval = null;
+let dernierNombreCommandes = 0;
 
 // Log immédiat pour vérifier que le fichier se charge
 console.log('✅ Fichier admin.js chargé');
@@ -32,6 +34,20 @@ document.addEventListener('DOMContentLoaded', () => {
             chargerProduits();
             chargerGraphiques(); // ✅ Charger les graphiques au démarrage
             chargerDonneesCalendrier(); // ✅ Charger les données du calendrier
+            
+            // ✅ DÉMARRER L'AUTO-REFRESH ICI (après chargement initial)
+            setTimeout(() => {
+                demarrerAutoRefresh();
+                
+                // Initialiser le compteur avec les données actuelles
+                fetch('/api/admin/statistiques', { credentials: 'include' })
+                    .then(res => res.json())
+                    .then(stats => {
+                        dernierNombreCommandes = stats.total_commandes || 0;
+                        console.log(`📊 Compteur initial: ${dernierNombreCommandes} commandes`);
+                    })
+                    .catch(err => console.error('Erreur initialisation compteur:', err));
+            }, 2000); // Démarrer après 2 secondes
         }, 100);
     
     // Event listeners pour la navigation
@@ -1859,3 +1875,197 @@ function afficherDetailsJour(dateStr, data) {
 }
 
 console.log('✅ Fonctions graphiques et calendrier chargées');
+
+// ================================================
+// SYSTÈME DE MISE À JOUR AUTOMATIQUE EN TEMPS RÉEL
+// ================================================
+
+/**
+ * Démarrer la mise à jour automatique du dashboard
+ */
+function demarrerAutoRefresh() {
+    // Vérifier toutes les 3 secondes pour un vrai temps réel
+    const INTERVALLE = 3000; // 3 secondes
+    
+    console.log('🔄 Auto-refresh activé (toutes les 3 secondes) - TEMPS RÉEL');
+    
+    autoRefreshInterval = setInterval(async () => {
+        try {
+            console.log('🔄 [Auto-refresh] Vérification en cours...'); // LOG AJOUTÉ
+            
+            // Récupérer les nouvelles statistiques
+            const response = await fetch('/api/admin/statistiques', {
+                credentials: 'include'
+            });
+            
+            if (!response.ok) {
+                // Si erreur 401, l'utilisateur n'est plus connecté
+                if (response.status === 401) {
+                    console.log('⚠️ Session expirée, arrêt de l\'auto-refresh');
+                    arreterAutoRefresh();
+                    return;
+                }
+                throw new Error('Erreur réseau');
+            }
+            
+            const stats = await response.json();
+            console.log('📊 [Auto-refresh] Stats reçues:', stats); // LOG AJOUTÉ
+            
+            // Vérifier s'il y a de nouvelles commandes
+            const nouvellesCommandes = stats.total_commandes || 0;
+            console.log(`📈 [Auto-refresh] Commandes: ${dernierNombreCommandes} → ${nouvellesCommandes}`); // LOG AJOUTÉ
+            
+            // TOUJOURS mettre à jour les statistiques (pas seulement si nouvelles commandes)
+            console.log('🔄 [Auto-refresh] Mise à jour des statistiques...'); // LOG AJOUTÉ
+            await chargerStatistiques();
+            
+            if (nouvellesCommandes > dernierNombreCommandes) {
+                console.log(`🔔 Nouvelles commandes détectées: ${nouvellesCommandes - dernierNombreCommandes}`);
+                
+                // Mettre à jour le badge de notification
+                mettreAJourBadgeNotification(nouvellesCommandes - dernierNombreCommandes);
+                
+                // Recharger les commandes
+                await chargerCommandes();
+                
+                // Mettre à jour les graphiques
+                await chargerGraphiques();
+            }
+            
+            // Mettre à jour la section active en temps réel
+            const sectionActive = document.querySelector('.admin-section:not(.hidden)');
+            if (sectionActive) {
+                const sectionId = sectionActive.id;
+                
+                // Mettre à jour selon la section active
+                switch(sectionId) {
+                    case 'commandesSection':
+                        await chargerCommandes();
+                        break;
+                    case 'produitsSection':
+                        await chargerProduits();
+                        break;
+                    case 'graphiquesSection':
+                        await chargerGraphiques();
+                        break;
+                    case 'calendrierSection':
+                        await chargerDonneesCalendrier();
+                        break;
+                }
+            }
+            
+            dernierNombreCommandes = nouvellesCommandes;
+            
+        } catch (error) {
+            console.error('❌ Erreur auto-refresh:', error);
+        }
+    }, INTERVALLE);
+}
+
+/**
+ * Arrêter la mise à jour automatique
+ */
+function arreterAutoRefresh() {
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+        console.log('⏹️ Auto-refresh arrêté');
+    }
+}
+
+/**
+ * Afficher un badge de notification pour les nouvelles commandes
+ */
+function mettreAJourBadgeNotification(nombre) {
+    // Créer ou mettre à jour le badge sur l'icône de notifications
+    let badge = document.getElementById('notificationBadge');
+    
+    if (!badge) {
+        // Créer le badge s'il n'existe pas
+        badge = document.createElement('span');
+        badge.id = 'notificationBadge';
+        badge.style.cssText = `
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            animation: pulse 1s infinite;
+        `;
+        
+        // Ajouter au menu "Commandes"
+        const commandesNavItem = document.querySelector('.admin-nav-item[data-section="commandes"]');
+        if (commandesNavItem) {
+            commandesNavItem.style.position = 'relative';
+            commandesNavItem.appendChild(badge);
+        }
+    }
+    
+    // Mettre à jour le nombre
+    badge.textContent = nombre > 9 ? '9+' : nombre;
+    badge.style.display = 'flex';
+    
+    // Animation pulse
+    if (!document.getElementById('badgeAnimation')) {
+        const style = document.createElement('style');
+        style.id = 'badgeAnimation';
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Afficher une notification navigateur (si permissions accordées)
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Nouvelle commande BOMBA ! 🎉', {
+            body: `Vous avez ${nombre} nouvelle${nombre > 1 ? 's' : ''} commande${nombre > 1 ? 's' : ''}`,
+            icon: '/images/logo.png',
+            badge: '/images/logo.png'
+        });
+    }
+}
+
+/**
+ * Masquer le badge de notification
+ */
+function masquerBadgeNotification() {
+    const badge = document.getElementById('notificationBadge');
+    if (badge) {
+        badge.style.display = 'none';
+    }
+}
+
+// Demander la permission pour les notifications navigateur
+if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+            console.log('✅ Notifications navigateur activées');
+        }
+    });
+}
+
+// Masquer le badge quand on clique sur "Commandes"
+document.addEventListener('click', (e) => {
+    const commandesNav = e.target.closest('.admin-nav-item[data-section="commandes"]');
+    if (commandesNav) {
+        masquerBadgeNotification();
+    }
+});
+
+// Arrêter l'auto-refresh quand on quitte la page
+window.addEventListener('beforeunload', () => {
+    arreterAutoRefresh();
+});
+
+console.log('✅ Système de mise à jour automatique chargé');
