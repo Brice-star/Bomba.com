@@ -1295,9 +1295,80 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // ==================== DÉMARRAGE DU SERVEUR ====================
 
-const server = app.listen(PORT, () => {
-    console.log(`🚀 Serveur BOMBA démarré sur http://localhost:${PORT}`);
-    console.log(`📊 Interface admin: http://localhost:${PORT}/admin/login`);
+// Run lightweight, safe migrations at startup. This runs inside the platform
+// (Railway) where internal DB hostnames are resolvable. It will add the
+// missing columns if they do not exist and will not fail the startup on error.
+async function ensureSchema() {
+    try {
+        console.log('🔧 Vérification du schéma de la base de données...');
+
+        // Helper to check if a column exists in the current database
+        const columnExists = async (table, column) => {
+            const [rows] = await db.query(
+                "SELECT COUNT(*) AS c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?",
+                [table, column]
+            );
+            return rows && rows[0] && rows[0].c > 0;
+        };
+
+        // Commands to ensure
+        const commands = [
+            {
+                table: 'commandes',
+                column: 'devise',
+                alter: "ALTER TABLE `commandes` ADD COLUMN `devise` VARCHAR(10)"
+            },
+            {
+                table: 'commandes',
+                column: 'vue',
+                alter: "ALTER TABLE `commandes` ADD COLUMN `vue` BOOLEAN DEFAULT FALSE"
+            },
+            {
+                table: 'produits',
+                column: 'textile_disponibilite',
+                alter: "ALTER TABLE `produits` ADD COLUMN `textile_disponibilite` TEXT"
+            }
+        ];
+
+        for (const c of commands) {
+            try {
+                const exists = await columnExists(c.table, c.column);
+                if (exists) {
+                    console.log(`✔ Colonne \'${c.column}\' existe déjà dans la table \'${c.table}\'`);
+                    continue;
+                }
+                console.log(`➕ Ajout de la colonne \'${c.column}\' à la table \'${c.table}\'...`);
+                await db.query(c.alter + ';');
+                console.log(`✅ Colonne \'${c.column}\' ajoutée à la table \'${c.table}\'`);
+            } catch (err) {
+                // Log and continue; don't crash the server for migration errors
+                console.error(`⚠️ Erreur lors de la migration (${c.table}.${c.column}):`, err && err.message ? err.message : err);
+            }
+        }
+
+        console.log('🔧 Vérification du schéma terminée.');
+    } catch (err) {
+        console.error('⚠️ Impossible d\'effectuer la vérification du schéma:', err && err.message ? err.message : err);
+    }
+}
+
+// Run migrations and then start the server. We don't await forever — if the
+// migration hits an unexpected fatal error we still start the server so that
+// the platform healthchecks can run and we can investigate.
+ensureSchema().finally(() => {
+    const server = app.listen(PORT, () => {
+        console.log(`🚀 Serveur BOMBA démarré sur http://localhost:${PORT}`);
+        console.log(`📊 Interface admin: http://localhost:${PORT}/admin/login`);
+    });
+
+    // Empêcher le serveur de se fermer automatiquement
+    server.on('close', () => {
+        console.log('⚠️ Serveur fermé');
+    });
+
+    server.on('error', (error) => {
+        console.error('❌ Erreur serveur:', error);
+    });
 });
 
 // Empêcher le serveur de se fermer automatiquement
