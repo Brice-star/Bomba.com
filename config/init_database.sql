@@ -1,67 +1,57 @@
 -- Script d'initialisation de la base de données BOMBA
 -- Exécutez ce script dans MySQL pour créer la structure de la base de données
 
-CREATE DATABASE IF NOT EXISTS bomba CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE bomba;
 
--- Table des produits
-CREATE TABLE IF NOT EXISTS produits (
+CREATE TABLE IF NOT EXISTS sessions_visiteurs (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(255) NOT NULL,
-    description TEXT,
-    prix DECIMAL(10,2) NOT NULL,
-    categorie VARCHAR(100),
-    image_principale VARCHAR(255),
-    images_secondaires TEXT,
-    tailles_disponibles VARCHAR(100),
-    date_ajout TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_categorie (categorie),
-    INDEX idx_prix (prix)
+    session_id VARCHAR(64) NOT NULL UNIQUE,
+    ip_hash VARCHAR(64) NOT NULL,
+    user_agent_hash VARCHAR(64) NOT NULL,
+    premiere_visite TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    derniere_visite TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    nombre_pages_vues INT DEFAULT 1,
+    INDEX idx_session (session_id),
+    INDEX idx_derniere_visite (derniere_visite)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table des commandes
-CREATE TABLE IF NOT EXISTS commandes (
+-- Insert sessions_visiteurs (upsert to avoid duplicate primary/key errors)
+INSERT INTO sessions_visiteurs (session_id, ip_hash, user_agent_hash, premiere_visite, derniere_visite, nombre_pages_vues) VALUES
+('aaa3dbec05c86b6550921134b067bee1025109f2749715d4f8cff581a4fcf5db', 'eff8e7ca506627fe15dda5e0e512fcaad70b6d520f37cc76597fdb4f2d83a1a3', 'd713dadbf3d0ca255287b277ab4d36ce7d711d34f197e05966270e2160e6da6c', '2025-11-10 16:00:47', '2025-11-12 02:54:48', 292),
+('fe584ffd803e34ef621ddf897ddf1a99c277a855da357f2948aae624d19a4f82', 'eff8e7ca506627fe15dda5e0e512fcaad70b6d520f37cc76597fdb4f2d83a1a3', 'd8f0d1da573e87298d19f48d579543b55bd2c985d4ad7bbf300e1540180aac90', '2025-11-10 16:55:59', '2025-11-10 16:55:59', 1),
+('df49a7607326ef276933b2a1dc083a2d7b9efcc7a5f1f2643760bbc875069bb0', 'eff8e7ca506627fe15dda5e0e512fcaad70b6d520f37cc76597fdb4f2d83a1a3', 'd8f0d1da573e87298d19f48d579543b55bd2c985d4ad7bbf300e1540180aac90', '2025-11-10 16:59:40', '2025-11-10 16:59:40', 1)
+ON DUPLICATE KEY UPDATE
+    ip_hash = VALUES(ip_hash),
+    user_agent_hash = VALUES(user_agent_hash),
+    derniere_visite = VALUES(derniere_visite),
+    nombre_pages_vues = VALUES(nombre_pages_vues);
+
+-- Table statistiques_visites
+CREATE TABLE IF NOT EXISTS statistiques_visites (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    numero_commande VARCHAR(50) UNIQUE NOT NULL,
-    nom_client VARCHAR(255) NOT NULL,
-    email_client VARCHAR(255),
-    telephone_client VARCHAR(50),
-    adresse_livraison TEXT NOT NULL,
-    pays VARCHAR(100),
-    produits_commandes TEXT, -- JSON (id_produit, taille, quantité, prix)
-    montant_total DECIMAL(10,2),
-    statut ENUM('En cours', 'Préparation', 'Expédiée', 'Livrée') DEFAULT 'En cours',
-    date_commande TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    date_livraison_estimee DATE,
-    INDEX idx_numero (numero_commande),
-    INDEX idx_statut (statut),
-    INDEX idx_date (date_commande)
+    date_visite DATE NOT NULL UNIQUE,
+    nombre_visites INT DEFAULT 0,
+    visiteurs_uniques INT DEFAULT 0,
+    INDEX idx_date (date_visite)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table administrateur
-CREATE TABLE IF NOT EXISTS admin (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(100) UNIQUE NOT NULL,
-    mot_de_passe VARCHAR(255) NOT NULL,
-    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Insert statistiques_visites (upsert on date_visite)
+INSERT INTO statistiques_visites (date_visite, nombre_visites, visiteurs_uniques) VALUES
+('2025-11-10', 148, 148),
+('2025-11-11', 40, 40),
+('2025-11-12', 106, 106)
+ON DUPLICATE KEY UPDATE
+    nombre_visites = VALUES(nombre_visites),
+    visiteurs_uniques = VALUES(visiteurs_uniques);
 
--- Insérer un administrateur par défaut (mot de passe: admin123 - À CHANGER EN PRODUCTION)
--- Le mot de passe sera hashé par bcrypt dans l'application
-INSERT INTO admin (username, mot_de_passe) VALUES ('admin', 'temp_password')
-ON DUPLICATE KEY UPDATE username=username;
+-- Mettre à jour les auto_increment
+ALTER TABLE admin MODIFY id INT NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE commandes MODIFY id INT NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
+ALTER TABLE produits MODIFY id INT NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+ALTER TABLE sessions_visiteurs MODIFY id INT NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+ALTER TABLE statistiques_visites MODIFY id INT NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=389;
 
--- Insérer 5 produits initiaux pour tester
-INSERT INTO produits (nom, description, prix, categorie, image_principale, images_secondaires, tailles_disponibles) VALUES
-('Ensemble Traditionnel Homme Beige', 'Magnifique ensemble traditionnel béninois pour homme, confectionné avec des tissus de qualité supérieure. Idéal pour les cérémonies et événements spéciaux.', 45000, 'Hommes', '/images/products/homme-beige.jpg', '/images/products/homme-beige-2.jpg,/images/products/homme-beige-3.jpg', 'S,M,L,XL'),
-('Robe Africaine Moderne Femme', 'Robe élégante au style africain moderne, mêlant tradition et contemporanéité. Parfaite pour toutes les occasions.', 35000, 'Femmes', '/images/products/femme-moderne.jpg', '/images/products/femme-moderne-2.jpg,/images/products/femme-moderne-3.jpg', 'S,M,L,XL'),
-('Chemise Africaine Homme Vert', 'Chemise en tissu wax authentique avec motifs africains. Coupe moderne et confortable pour un style unique.', 25000, 'Hommes', '/images/products/chemise-verte.jpg', '/images/products/chemise-verte-2.jpg', 'S,M,L,XL'),
-('Ensemble Enfant Traditionnel', 'Adorable ensemble traditionnel pour enfant, disponible en plusieurs couleurs. Confort et élégance garantis.', 20000, 'Enfants', '/images/products/enfant-trad.jpg', '/images/products/enfant-trad-2.jpg', 'S,M,L'),
-('Boubou Femme Premium', 'Boubou de luxe pour femme avec broderies fines. Tissu léger et respirant, idéal pour le climat africain.', 55000, 'Femmes', '/images/products/boubou-femme.jpg', '/images/products/boubou-femme-2.jpg,/images/products/boubou-femme-3.jpg', 'M,L,XL')
-ON DUPLICATE KEY UPDATE nom=nom;
+
 
 -- Afficher les tables créées
-SHOW TABLES;
 
-SELECT 'Base de données BOMBA créée avec succès ✅' AS Status;

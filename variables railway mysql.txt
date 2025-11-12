@@ -1,0 +1,69 @@
+BASE DE DONNÉES MYSQL :
+chemin de fer
+
+
+URL_PUBLIC_MYSQL :
+mysql://root:ZUTTRKsCHjIePGXuDWQZAVdfdTbrvBFl@gondola.proxy.rlwy.net:26439/railway
+
+
+MYSQL_ROOT_PASSWORD
+ZUTTRKsCHjIePGXuDWQZAVdfdTbrvBFl
+
+
+URL_MYSQL
+mysql://root:ZUTTRKsCHjIePGXuDWQZAVdfdTbrvBFl@mysql.railway.internal:3306/railway
+
+
+BASE DE DONNÉES MYSQL
+chemin de fer
+
+
+HÔTE MYSQL
+mysql.railway.internal
+
+
+
+MYSQLPASSWORD
+ZUTTRKsCHjIePGXuDWQZAVdfdTbrvBFl
+
+
+
+MYSQLPORT
+3306
+
+
+
+MySQL
+racine
+
+
+
+
+
+ce que copilot ma demande de noter :
+
+ADMIN_PASS="admin123"
+ADMIN_USER="admin"
+BASE_URL="https://bomba.up.railway.app"
+DB_HOST="mysql.railway.internal"
+DB_NAME="railway"
+DB_PASSWORD="ZUTTRKsCHjIePGXuDWQZAVdfdTbrvBFl"
+DB_PORT="3306"
+DB_USER="root"
+EMAIL_ADMIN="yochef8@gmail.com"
+EMAIL_FROM="Bomba <yochef8@gmail.com>"
+EMAIL_PASSWORD="ssiqffghjaduvplr"
+EMAIL_SERVICE="gmail"
+EMAIL_USER="yochef8@gmail.com"
+FRONTEND_URL="https://bomba.up.railway.app"
+NODE_ENV="production"
+PORT="3000"
+SESSION_SECRET="6f31bec4b46714f558d38cbc09496ae074f67f1815b793d0623360f2cf27737f"
+SITE_URL="https://bomba.up.railway.app"
+STRIPE_PUBLIC_KEY="pk_test_51SRiIzBHXmj88dl6inavpszEJoOK7oHKpfbYU5xvSg4a9zPoKtSvgmGLGKNrOhxTYiuIIyAH8ObdpRkyxpVbqv7G00sTMFnNHG"
+STRIPE_SECRET_KEY="sk_test_51SRiIzBHXmj88dl6inavpszEJoOK7oHKpfbYU5xvSg4a9zPoKtSvgmGLGKNrOhxTYiuIIyAH8ObdpRkyxpVbqv7G00sTMFnNHG"
+
+
+
+
+

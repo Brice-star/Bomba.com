@@ -25,6 +25,13 @@ const { envoyerEmailConfirmation, envoyerEmailStatut, envoyerEmailNotificationAd
 const app = express();
 const PORT = config.port;
 
+// Sur les plateformes PaaS derrière un reverse-proxy (Railway, Heroku),
+// il est nécessaire d'activer "trust proxy" afin que express et
+// express-rate-limit lisent correctement l'en-tête X-Forwarded-For.
+if (config.isProduction) {
+    // 1 signifie faire confiance au premier proxy
+    app.set('trust proxy', 1);
+}
 // ==================== PERFORMANCE: COMPRESSION GZIP ====================
 // Compresser toutes les réponses HTTP pour réduire la taille et améliorer la vitesse
 app.use(compression({
@@ -70,17 +77,42 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
 // Configuration des sessions pour l'admin
-app.use(session({
+// Sessions: support optionnel Redis (si REDIS_URL présent). Sinon MemoryStore par défaut.
+const sessionOptions = {
     secret: config.session.secret,
     resave: false,
     saveUninitialized: false,
-    cookie: { 
+    cookie: {
         secure: config.isProduction,
-        httpOnly: true, // Protection XSS
-        sameSite: 'strict', // Protection CSRF
+        httpOnly: true,
+        sameSite: 'strict',
         maxAge: 24 * 60 * 60 * 1000 // 24 heures
     }
-}));
+};
+
+if (process.env.REDIS_URL) {
+    try {
+        // Essayer d'utiliser ioredis + connect-redis si disponibles
+        const Redis = require('ioredis');
+        const connectRedis = require('connect-redis');
+        const RedisStore = connectRedis(session);
+
+        const redisClient = new Redis(process.env.REDIS_URL);
+
+        // Optionnel: gérer les erreurs de connexion redis sans planter l'app
+        redisClient.on('error', (err) => {
+            console.warn('⚠️ Redis client error:', err && err.message ? err.message : err);
+        });
+
+        sessionOptions.store = new RedisStore({ client: redisClient });
+        console.log('✅ Sessions: Redis store activé (REDIS_URL détecté)');
+    } catch (err) {
+        console.warn('⚠️ REDIS_URL présent mais modules Redis non installés ou erreur de connexion — fallback MemoryStore.');
+        console.warn(err && err.message ? err.message : err);
+    }
+}
+
+app.use(session(sessionOptions));
 
 // ==================== ANTI-BOT (Sans inscription externe) ====================
 // IMPORTANT: Ces middlewares doivent être après la session car ils utilisent req.session
@@ -1127,6 +1159,46 @@ app.use((err, req, res, next) => {
     console.error('❌ Erreur interceptée par le handler:', err);
     console.error('Stack:', err.stack);
     res.status(500).json({ error: 'Erreur serveur interne', details: err.message });
+});
+
+// ==================== HEALTHCHECK (useful for Railway / load balancer) ====================
+// Endpoint non-auth qui vérifie la connectivité basique: BDD, variables critiques
+app.get('/health', async (req, res) => {
+    const checks = {
+        uptime: process.uptime(),
+        env: {
+            NODE_ENV: process.env.NODE_ENV || 'undefined',
+            PORT: process.env.PORT || 'undefined'
+        },
+        db: { ok: false, message: null },
+        stripe: { ok: false, message: null },
+        email: { ok: false, message: null }
+    };
+
+    // Check DB
+    try {
+        await db.query('SELECT 1');
+        checks.db.ok = true;
+    } catch (err) {
+        checks.db.message = err.message;
+    }
+
+    // Check Stripe keys presence (do not call API)
+    if (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_PUBLIC_KEY) {
+        checks.stripe.ok = true;
+    } else {
+        checks.stripe.message = 'STRIPE keys missing';
+    }
+
+    // Check email config presence
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
+        checks.email.ok = true;
+    } else {
+        checks.email.message = 'EMAIL configuration missing (EMAIL_USER/EMAIL_PASSWORD)';
+    }
+
+    const statusCode = (checks.db.ok && checks.stripe.ok && checks.email.ok) ? 200 : 500;
+    res.status(statusCode).json(checks);
 });
 
 // ==================== GESTION DES ERREURS ====================
