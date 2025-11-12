@@ -81,6 +81,7 @@ function afficherProduits(produits) {
     
     productGrid.innerHTML = produits.map(produit => {
         const tailles = produit.tailles_disponibles ? produit.tailles_disponibles.split(',') : [];
+        const devise = produit.devise || 'XAF';
         
         return `
             <div class="product-card" data-product-id="${produit.id}">
@@ -89,7 +90,7 @@ function afficherProduits(produits) {
                 <div class="product-info">
                     <p class="product-category">${produit.categorie || 'Non catégorisé'}</p>
                     <h3 class="product-name">${produit.nom}</h3>
-                    <p class="product-price">${Number(produit.prix).toLocaleString('fr-FR')} FCFA</p>
+                    <p class="product-price">${formaterMontant(produit.prix, devise)}</p>
                     <div class="product-sizes">
                         ${tailles.map(taille => `<span class="size-badge">${taille.trim()}</span>`).join('')}
                     </div>
@@ -102,6 +103,7 @@ function afficherProduits(produits) {
                                 data-product-id="${produit.id}"
                                 data-product-nom="${produit.nom}"
                                 data-product-prix="${produit.prix}"
+                                data-product-devise="${devise}"
                                 data-product-image="${produit.image_principale}"
                                 data-product-tailles="${produit.tailles_disponibles}"
                                 title="Ajouter au panier">
@@ -139,6 +141,7 @@ function afficherProduits(produits) {
                 id: this.getAttribute('data-product-id'),
                 nom: this.getAttribute('data-product-nom'),
                 prix: parseFloat(this.getAttribute('data-product-prix')),
+                devise: this.getAttribute('data-product-devise') || 'XAF',
                 image: this.getAttribute('data-product-image'),
                 tailles: this.getAttribute('data-product-tailles').split(',').map(t => t.trim())
             };

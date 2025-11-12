@@ -112,15 +112,48 @@
     </div>
 
     <script>
+        console.log('🔍 Script de login chargé');
+        
         // Event listener pour le formulaire de connexion
-        document.getElementById('loginForm').addEventListener('submit', login);
+        const loginForm = document.getElementById('loginForm');
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
+        
+        console.log('📝 Formulaire trouvé:', loginForm ? 'OUI' : 'NON');
+        console.log('🔘 Bouton trouvé:', submitBtn ? 'OUI' : 'NON');
+        
+        if (loginForm) {
+            loginForm.addEventListener('submit', login);
+            console.log('✅ Event listener ajouté au formulaire');
+        } else {
+            console.error('❌ ERREUR: Formulaire non trouvé !');
+        }
         
         async function login(event) {
+            console.log('🚀 Fonction login appelée');
             event.preventDefault();
+            console.log('✅ preventDefault() appelé');
             
-            const username = document.getElementById('username').value;
+            const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('errorMessage');
+            
+            console.log('👤 Username:', username ? 'Rempli' : 'VIDE');
+            console.log('🔒 Password:', password ? 'Rempli' : 'VIDE');
+            
+            // Validation basique
+            if (!username || !password) {
+                console.log('⚠️ Validation échouée: champs manquants');
+                errorDiv.textContent = 'Veuillez remplir tous les champs';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+            
+            // Désactiver le bouton pendant la requête
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Connexion...';
+            errorDiv.classList.add('hidden');
+            
+            console.log('📡 Envoi de la requête à /api/admin/login...');
             
             try {
                 const response = await fetch('/api/admin/login', {
@@ -131,20 +164,31 @@
                     body: JSON.stringify({ username, password })
                 });
                 
+                console.log('📥 Réponse reçue:', response.status, response.statusText);
+                
                 const data = await response.json();
+                console.log('📦 Données:', data);
                 
                 if (response.ok && data.success) {
+                    console.log('✅ Connexion réussie !');
+                    submitBtn.textContent = 'Connexion réussie !';
                     window.location.href = '/admin/dashboard';
                 } else {
-                    errorDiv.textContent = data.error || 'Erreur de connexion';
+                    console.log('❌ Connexion échouée:', data.error);
+                    errorDiv.textContent = data.error || 'Identifiants incorrects';
                     errorDiv.classList.remove('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Se connecter';
                 }
             } catch (error) {
-                console.error('Erreur:', error);
-                errorDiv.textContent = 'Erreur de connexion au serveur';
+                console.error('❌ ERREUR FETCH:', error);
+                errorDiv.textContent = 'Erreur de connexion au serveur. Réessayez.';
                 errorDiv.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Se connecter';
             }
         }
     </script>
+    <script src="/js/cookie-consent.js" defer></script>
 </body>
 </html>

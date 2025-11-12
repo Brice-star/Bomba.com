@@ -59,6 +59,34 @@ function afficherDetailProduit() {
     const imagesSecondaires = produitActuel.images_secondaires ? produitActuel.images_secondaires.split(',') : [];
     const toutesImages = [produitActuel.image_principale, ...imagesSecondaires];
     
+    // ===== MISE À JOUR DES META TAGS SEO =====
+    const baseUrl = 'https://bombaclothing.com';
+    const productUrl = `${baseUrl}/produit.html?id=${produitActuel.id}`;
+    const productImage = `${baseUrl}${produitActuel.image_principale}`;
+    const productDescription = produitActuel.description || `${produitActuel.nom} - Vêtement africain de luxe BOMBA`;
+    const productTitle = `${produitActuel.nom} - ${formaterMontant(produitActuel.prix, produitActuel.devise || 'XAF')} | BOMBA`;
+    
+    // Mettre à jour le titre de la page
+    document.getElementById('page-title').textContent = productTitle;
+    document.title = productTitle;
+    
+    // Mettre à jour les meta tags
+    document.querySelector('meta[name="description"]').setAttribute('content', productDescription);
+    document.getElementById('canonical-url').setAttribute('href', productUrl);
+    
+    // Open Graph tags
+    document.getElementById('og-title').setAttribute('content', productTitle);
+    document.getElementById('og-description').setAttribute('content', productDescription);
+    document.getElementById('og-url').setAttribute('content', productUrl);
+    document.getElementById('og-image').setAttribute('content', productImage);
+    document.getElementById('og-price').setAttribute('content', produitActuel.prix);
+    document.getElementById('og-currency').setAttribute('content', produitActuel.devise || 'XAF');
+    
+    // Twitter Card tags
+    document.getElementById('twitter-title').setAttribute('content', productTitle);
+    document.getElementById('twitter-description').setAttribute('content', productDescription);
+    document.getElementById('twitter-image').setAttribute('content', productImage);
+    
     const html = `
         <div class="product-detail-container">
             <div class="product-images">
@@ -79,7 +107,7 @@ function afficherDetailProduit() {
                 </p>
                 <h1>${produitActuel.nom}</h1>
                 <p class="product-price" style="font-size: 2rem; margin: 1rem 0;">
-                    ${Number(produitActuel.prix).toLocaleString('fr-FR')} FCFA
+                    ${formaterMontant(produitActuel.prix, produitActuel.devise || 'XAF')}
                 </p>
                 
                 <div style="border-top: 2px solid var(--gris-clair); padding-top: 1.5rem; margin-top: 1.5rem;">
@@ -145,6 +173,46 @@ function afficherDetailProduit() {
     `;
     
     document.getElementById('productDetail').innerHTML = html;
+    
+    // ===== AJOUTER SCHEMA.ORG JSON-LD POUR LE PRODUIT =====
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": produitActuel.nom,
+        "description": produitActuel.description || `${produitActuel.nom} - Vêtement africain de luxe BOMBA`,
+        "image": `${baseUrl}${produitActuel.image_principale}`,
+        "sku": `BOMBA-${produitActuel.id}`,
+        "brand": {
+            "@type": "Brand",
+            "name": "BOMBA"
+        },
+        "offers": {
+            "@type": "Offer",
+            "url": productUrl,
+            "priceCurrency": produitActuel.devise || "XAF",
+            "price": produitActuel.prix,
+            "availability": "https://schema.org/InStock",
+            "priceValidUntil": new Date(Date.now() + 365*24*60*60*1000).toISOString().split('T')[0]
+        },
+        "category": produitActuel.categorie || "Vêtements",
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "5",
+            "reviewCount": "1"
+        }
+    };
+    
+    // Injecter le JSON-LD dans le head
+    let existingSchema = document.getElementById('product-schema');
+    if (existingSchema) {
+        existingSchema.remove();
+    }
+    
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = 'product-schema';
+    script.textContent = JSON.stringify(schemaData);
+    document.head.appendChild(script);
     
     // Ajouter les event listeners après avoir créé le HTML
     attachEventListeners();
@@ -224,7 +292,9 @@ function ajouterAuPanier() {
             id: produitActuel.id,
             nom: produitActuel.nom,
             prix: produitActuel.prix,
+            devise: produitActuel.devise || 'XAF',
             image: produitActuel.image_principale,
+            reference: produitActuel.reference || `BOMBA-${String(produitActuel.id).padStart(4, '0')}`,
             taille: tailleSelectionnee,
             quantite: quantite
         });
@@ -241,9 +311,11 @@ function ajouterAuPanier() {
 }
 
 function acheterMaintenant() {
-    ajouterAuPanier();
-    // Attendre un peu pour que l'ajout soit effectué
-    setTimeout(() => {
-        window.location.href = '/panier';
-    }, 500);
+    if (!tailleSelectionnee) {
+        document.getElementById('tailleError').classList.remove('hidden');
+        return;
+    }
+    
+    // Rediriger directement vers le panier sans ajouter de nouveau produit
+    window.location.href = '/panier';
 }

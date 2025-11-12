@@ -1,0 +1,26 @@
+# Robots.txt pour BOMBA - Vêtements de luxe
+# Optimisé pour un meilleur référencement
+
+# Autoriser tous les robots à indexer le site
+User-agent: *
+Allow: /
+
+# Empêcher l'indexation des zones sensibles
+Disallow: /api/
+Disallow: /admin/
+Disallow: /config/
+Disallow: /middleware/
+
+# Pages de confirmation et paiement (pas d'intérêt SEO)
+Disallow: /confirmation.html
+Disallow: /paiement.html
+
+# Bloquer les anciens bots malveillants
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+# Sitemap pour les moteurs de recherche
+Sitemap: https://bombaclothing.com/sitemap.xml

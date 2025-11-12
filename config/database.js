@@ -24,7 +24,12 @@ pool.getConnection((err, connection) => {
         return;
     }
     console.log('✅ Connexion à la base de données MySQL réussie');
-    connection.release();
+    if (connection) connection.release();
+});
+
+// Gérer les erreurs du pool
+pool.on('error', (err) => {
+    console.error('❌ Erreur MySQL pool:', err);
 });
 
 module.exports = promisePool;

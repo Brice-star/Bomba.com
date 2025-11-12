@@ -3,9 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="BOMBA - Boutique de vêtements africains modernes et traditionnels. Découvrez nos collections de tenues béninoises élégantes.">
-    <meta name="keywords" content="vêtements africains, tenues béninoises, mode africaine, boubou, chemises africaines, BOMBA">
-    <title>BOMBA - Vêtements Africains Modernes et Élégants</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="BOMBA - Boutique en ligne de vêtements africains de luxe. Tenues traditionnelles et modernes du Bénin, boubous, chemises africaines. Livraison internationale.">
+    <meta name="keywords" content="vêtements africains, tenues béninoises, mode africaine, boubou, chemises africaines, BOMBA, vêtements traditionnels, mode luxe africaine">
+    <meta name="author" content="BOMBA by Lyne's Design">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://bombaclothing.com/">
+    
+    <title>BOMBA - Vêtements Africains de Luxe | Mode Traditionnelle & Moderne</title>
+    
+    <!-- Open Graph Meta Tags (Facebook, LinkedIn) -->
+    <meta property="og:title" content="BOMBA - Vêtements Africains de Luxe | Mode Traditionnelle & Moderne">
+    <meta property="og:description" content="Découvrez nos collections exclusives de vêtements africains modernes et traditionnels. Tenues béninoises élégantes pour toutes occasions. Livraison internationale.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bombaclothing.com/">
+    <meta property="og:image" content="https://bombaclothing.com/images/og-image.jpg">
+    <meta property="og:image:alt" content="BOMBA - Vêtements Africains de Luxe">
+    <meta property="og:site_name" content="BOMBA">
+    <meta property="og:locale" content="fr_FR">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="BOMBA - Vêtements Africains de Luxe | Mode Traditionnelle & Moderne">
+    <meta name="twitter:description" content="Découvrez nos collections exclusives de vêtements africains modernes et traditionnels. Livraison internationale.">
+    <meta name="twitter:image" content="https://bombaclothing.com/images/og-image.jpg">
+    <meta name="twitter:image:alt" content="BOMBA - Vêtements Africains de Luxe">
+    
+    <!-- Schema.org JSON-LD pour Organisation -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ClothingStore",
+        "name": "BOMBA",
+        "alternateName": "BOMBA by Lyne's Design",
+        "url": "https://bombaclothing.com",
+        "logo": "https://bombaclothing.com/images/logo.png",
+        "description": "Boutique en ligne de vêtements africains de luxe. Tenues traditionnelles et modernes du Bénin, boubous, chemises africaines.",
+        "priceRange": "$$",
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "BJ",
+            "addressLocality": "Bénin"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Customer Service",
+            "email": "contact@bombaclothing.com"
+        },
+        "sameAs": []
+    }
+    </script>
+    
+    <!-- Schema.org JSON-LD pour Site Web -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "BOMBA",
+        "url": "https://bombaclothing.com",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://bombaclothing.com/?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -77,7 +140,7 @@
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label for="prixMinFilter">Prix minimum (FCFA)</label>
+                    <label for="prixMinFilter">Prix minimum (EUR)</label>
                     <input type="number" id="prixMinFilter" placeholder="0" onchange="appliquerFiltres()">
                 </div>
                 <div class="filter-item">
@@ -115,20 +178,19 @@
                 <p><a href="/">Accueil</a></p>
                 <p><a href="#produits">Produits</a></p>
                 <p><a href="/suivi">Suivi de commande</a></p>
-                <p><a href="/cgv">CGV</a></p>
-                <p><a href="/admin/login">Admin</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Informations légales</h3>
+                <p><a href="/mentions-legales">Mentions légales</a></p>
+                <p><a href="/confidentialite">Confidentialité</a></p>
+                <p><a href="/conditions-vente">CGV</a></p>
+                <p><a href="/conditions-utilisation">Conditions d'utilisation</a></p>
             </div>
             <div class="footer-section">
                 <h3>Contact</h3>
-                <p>📧 Email: contact@bomba.com</p>
-                <p>📱 Téléphone: +229 XX XX XX XX</p>
-                <p>📍 Adresse: Cotonou, Bénin</p>
-            </div>
-            <div class="footer-section">
-                <h3>Suivez-nous</h3>
-                <p><a href="#">Facebook</a></p>
-                <p><a href="#">Instagram</a></p>
-                <p><a href="#">WhatsApp</a></p>
+                <p>📧 <a href="mailto:contact@bomba-shop.com">contact@bomba-shop.com</a></p>
+                <p>📱 +229 XX XX XX XX</p>
+                <p>📍 Cotonou, Bénin</p>
             </div>
         </div>
         <div class="footer-bottom">
@@ -136,6 +198,8 @@
         </div>
     </footer>
 
+    <script src="/js/currencies.js"></script>
     <script src="/js/main.js"></script>
+    <script src="/js/cookie-consent.js" defer></script>
 </body>
 </html>

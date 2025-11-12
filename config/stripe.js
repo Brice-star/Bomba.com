@@ -15,17 +15,21 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 console.log('✅ Stripe initialisé avec clé:', process.env.STRIPE_SECRET_KEY.substring(0, 20) + '...');
 
 
-// Configuration des devises supportées
-const CURRENCIES = {
-    'FCFA': 'xof', // Franc CFA (West Africa)
+// Configuration des devises supportées par Stripe
+const DEVISE_STRIPE_MAP = {
+    'XAF': 'xof', // Franc CFA (West Africa)
     'EUR': 'eur',
     'USD': 'usd',
-    'GBP': 'gbp'
+    'CAD': 'cad'
 };
 
 // Fonction pour créer une session de paiement Stripe Checkout
 async function createCheckoutSession(orderData) {
     try {
+        // Déterminer la devise Stripe
+        const devise = orderData.devise || 'XAF';
+        const stripeCurrency = DEVISE_STRIPE_MAP[devise] || 'xof';
+        
         // Calculer le montant en centimes
         const amount = Math.round(orderData.montant_total * 100);
         
@@ -34,7 +38,7 @@ async function createCheckoutSession(orderData) {
             line_items: [
                 {
                     price_data: {
-                        currency: 'xof', // FCFA pour l'Afrique de l'Ouest
+                        currency: stripeCurrency,
                         product_data: {
                             name: 'Commande BOMBA',
                             description: `Commande #${orderData.numero_commande}`,
@@ -51,6 +55,7 @@ async function createCheckoutSession(orderData) {
             metadata: {
                 order_id: orderData.id.toString(),
                 order_number: orderData.numero_commande,
+                currency: devise
             },
         });
 
@@ -131,5 +136,5 @@ module.exports = {
     verifyPayment,
     createRefund,
     validateWebhook,
-    CURRENCIES
+    DEVISE_STRIPE_MAP
 };

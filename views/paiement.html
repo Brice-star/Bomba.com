@@ -186,6 +186,14 @@
                 
                 <div id="cardErrors" class="alert alert-error hidden" style="margin-top: 1rem;"></div>
                 
+                <!-- Estimation de conversion selon le pays -->
+                <div id="conversionInfo" class="alert alert-info" style="display: none; margin-top: 1.5rem; padding: 1.25rem; background-color: #e8f5e9; border-left: 4px solid var(--vert-profond); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <p style="margin: 0; font-size: 1rem; line-height: 1.7;">
+                        <strong style="font-size: 1.1rem;">💱 Montant en devise locale</strong><br>
+                        <span id="conversionDetails"></span>
+                    </p>
+                </div>
+                
                 <button type="button" id="validerCommandeBtn" class="btn btn-primary" style="width: 100%; margin-top: 2rem; font-size: 1.125rem; padding: 1rem;">
                     Valider et Payer
                 </button>
@@ -213,9 +221,17 @@
                 <p><a href="/suivi">Suivi de commande</a></p>
             </div>
             <div class="footer-section">
+                <h3>Informations légales</h3>
+                <p><a href="/mentions-legales">Mentions légales</a></p>
+                <p><a href="/confidentialite">Confidentialité</a></p>
+                <p><a href="/conditions-vente">CGV</a></p>
+                <p><a href="/conditions-utilisation">Conditions d'utilisation</a></p>
+            </div>
+            <div class="footer-section">
                 <h3>Contact</h3>
-                <p>📧 Email: contact@bomba.com</p>
-                <p>📱 Téléphone: +229 XX XX XX XX</p>
+                <p>📧 <a href="mailto:contact@bomba-shop.com">contact@bomba-shop.com</a></p>
+                <p>📱 +229 XX XX XX XX</p>
+                <p>📍 Cotonou, Bénin</p>
             </div>
         </div>
         <div class="footer-bottom">
@@ -223,6 +239,8 @@
         </div>
     </footer>
 
+    <script src="/js/currencies.js"></script>
     <script src="/js/paiement.js"></script>
+    <script src="/js/cookie-consent.js" defer></script>
 </body>
 </html>

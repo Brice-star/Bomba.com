@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Écouter les changements de pays pour la livraison
     document.getElementById('pays').addEventListener('change', calculerLivraison);
     
+    // Écouter les changements de pays pour la conversion
+    document.getElementById('pays').addEventListener('change', afficherConversionPays);
+    
     // Event listener pour le bouton de validation
     const validerBtn = document.getElementById('validerCommandeBtn');
     if (validerBtn) {
@@ -53,23 +56,56 @@ function afficherResume() {
         return;
     }
     
-    const subtotal = cart.reduce((sum, item) => sum + (Number(item.prix) * item.quantite), 0);
+    // Utiliser la fonction calculerTotalPanier de currencies.js
+    const resultat = calculerTotalPanier(cart.map(item => ({
+        prix: item.prix,
+        devise: item.devise || 'XAF',
+        quantite: item.quantite
+    })));
     
-    const resumeHTML = cart.map(item => `
+    let resumeHTML = cart.map(item => {
+        const devise = item.devise || 'XAF';
+        return `
         <div class="order-item">
             <span>${item.nom} (${item.taille}) x ${item.quantite}</span>
-            <span>${(Number(item.prix) * item.quantite).toLocaleString('fr-FR')} FCFA</span>
+            <span>${formaterMontant(item.prix * item.quantite, devise)}</span>
         </div>
-    `).join('') + `
+    `;
+    }).join('') + `
         <div class="order-item" style="border-top: 2px solid rgba(0,0,0,0.2); padding-top: 1rem;">
             <span><strong>Livraison</strong></span>
             <span><strong>Gratuite</strong></span>
         </div>
-        <div class="order-item order-total">
-            <span>Total</span>
-            <span>${subtotal.toLocaleString('fr-FR')} FCFA</span>
-        </div>
     `;
+    
+    // Ajouter le total selon le nombre de devises
+    if (resultat.details.length > 1) {
+        // Plusieurs devises : afficher les détails
+        resultat.details.forEach(d => {
+            resumeHTML += `
+                <div class="order-item" style="font-size: 0.9rem; color: #666;">
+                    <span>${getNomDevise(d.devise)}</span>
+                    <span>${d.montantFormate}</span>
+                </div>
+            `;
+        });
+        resumeHTML += `
+            <div class="order-item order-total">
+                <span>Total (converti en FCFA)</span>
+                <span>${formaterMontant(resultat.montantXAF, 'XAF')}</span>
+            </div>
+        `;
+    } else {
+        // Une seule devise
+        const devise = resultat.details[0]?.devise || 'XAF';
+        const montant = resultat.details[0]?.montant || 0;
+        resumeHTML += `
+            <div class="order-item order-total">
+                <span>Total</span>
+                <span>${formaterMontant(montant, devise)}</span>
+            </div>
+        `;
+    }
     
     document.getElementById('orderSummary').innerHTML = resumeHTML;
 }
@@ -101,6 +137,73 @@ function calculerLivraison() {
     
     document.getElementById('deliveryDate').textContent = dateFormatee;
     deliveryInfo.style.display = 'block';
+}
+
+/**
+ * Affiche l'estimation du montant en devise locale selon le pays sélectionné
+ */
+function afficherConversionPays() {
+    const pays = document.getElementById('pays').value;
+    const conversionInfo = document.getElementById('conversionInfo');
+    const conversionDetails = document.getElementById('conversionDetails');
+    
+    if (!pays) {
+        conversionInfo.style.display = 'none';
+        return;
+    }
+    
+    // Obtenir la devise du pays
+    const devisePays = getDevisePays(pays);
+    
+    // Calculer le total du panier
+    const cart = getCart();
+    const resultat = calculerTotalPanier(cart.map(item => ({
+        prix: item.prix,
+        devise: item.devise || 'XAF',
+        quantite: item.quantite
+    })));
+    
+    // Si le panier est en plusieurs devises, on utilise la devise principale
+    let deviseCommande = 'EUR'; // Par défaut EUR (car tous les produits seront en EUR maintenant)
+    let montantCommande = 0;
+    
+    if (resultat.details.length === 1) {
+        deviseCommande = resultat.details[0].devise;
+        montantCommande = resultat.details[0].montant;
+    } else {
+        // Trouver la devise avec le plus d'articles
+        const compteur = {};
+        cart.forEach(item => {
+            const dev = item.devise || 'XAF';
+            compteur[dev] = (compteur[dev] || 0) + item.quantite;
+        });
+        deviseCommande = Object.keys(compteur).reduce((a, b) => compteur[a] > compteur[b] ? a : b);
+        
+        // Calculer le montant dans cette devise
+        cart.forEach(item => {
+            if ((item.devise || 'XAF') === deviseCommande) {
+                montantCommande += item.prix * item.quantite;
+            }
+        });
+    }
+    
+    // Si la devise du pays est la même que la commande, pas besoin d'afficher
+    if (devisePays === deviseCommande) {
+        conversionInfo.style.display = 'none';
+        return;
+    }
+    
+    // Convertir le montant vers la devise du pays
+    const montantConverti = convertirDevise(montantCommande, deviseCommande, devisePays);
+    
+    // Afficher l'estimation
+    conversionDetails.innerHTML = `
+        📍 Vous êtes au <strong>${pays}</strong><br>
+        💰 Montant à payer : <strong>${formaterMontant(montantCommande, deviseCommande)}</strong><br>
+        💱 Estimation en devise locale : <strong>≈ ${formaterMontant(montantConverti, devisePays)}</strong><br>
+        <small style="opacity: 0.8;">La conversion sera effectuée par votre banque au taux du jour. Le montant peut légèrement varier.</small>
+    `;
+    conversionInfo.style.display = 'block';
 }
 
 function initialiserStripe() {
@@ -156,8 +259,21 @@ async function validerCommande(event) {
         return;
     }
     
-    // Calculer le montant total
-    const montantTotal = cart.reduce((sum, item) => sum + (Number(item.prix) * item.quantite), 0);
+    // Calculer le montant total avec gestion multi-devises
+    const resultat = calculerTotalPanier(cart.map(item => ({
+        prix: item.prix,
+        devise: item.devise || 'XAF',
+        quantite: item.quantite
+    })));
+    
+    // Déterminer la devise principale (celle avec le montant le plus élevé)
+    let devisePrincipale = 'XAF';
+    let montantTotal = resultat.montantXAF;
+    
+    if (resultat.details.length === 1) {
+        devisePrincipale = resultat.details[0].devise;
+        montantTotal = resultat.details[0].montant;
+    }
     
     // Préparer les données de commande
     const commandeData = {
@@ -167,7 +283,8 @@ async function validerCommande(event) {
         adresse_livraison: adresse,
         pays: pays,
         produits_commandes: cart,
-        montant_total: montantTotal
+        montant_total: montantTotal,
+        devise: devisePrincipale
     };
     
     try {
@@ -198,6 +315,7 @@ async function validerCommande(event) {
             body: JSON.stringify({
                 numero_commande: dataCommande.numero_commande,
                 montant_total: montantTotal,
+                devise: devisePrincipale,
                 commande_id: dataCommande.commande_id
             })
         });
