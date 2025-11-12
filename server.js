@@ -71,6 +71,31 @@ app.use(security.sanitizeData);
 
 // ==================== MIDDLEWARES ====================
 // Configuration des middlewares
+// Serve product images with a safe fallback before static middleware.
+// This ensures missing image filenames in the database don't return 404 but the placeholder.
+app.use((req, res, next) => {
+    try {
+        const p = (req.path || '').toLowerCase();
+        if (p.startsWith('/images/products/')) {
+            const fileName = req.path.split('/').pop();
+            const filePath = path.join(__dirname, 'public', 'images', 'products', fileName);
+            if (fs.existsSync(filePath)) {
+                return res.sendFile(filePath);
+            }
+
+            // Serve placeholder if specific product image not found
+            const placeholder = path.join(__dirname, 'public', 'images', 'products', 'placeholder.svg');
+            if (fs.existsSync(placeholder)) {
+                return res.sendFile(placeholder);
+            }
+            // If no placeholder, continue to static handler (will 404)
+        }
+    } catch (e) {
+        console.warn('⚠️ Error serving product image fallback:', e && e.message ? e.message : e);
+    }
+    next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json({ limit: '10mb' })); // Limiter la taille des requêtes
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
