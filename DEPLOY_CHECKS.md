@@ -36,3 +36,14 @@ DESCRIBE produits;
 6) Si tu veux que je prenne en charge d'autres corrections
 
 - Je peux implémenter des tests plus larges, ajouter une job de migration séparée, ou convertir la migration de démarrage en job one-off selon ta préférence.
+
+7) Endpoint interne de vérification (optionnel)
+
+- Le déploiement contient désormais un endpoint interne en lecture seule disponible uniquement si tu définis `INTERNAL_HEALTH_TOKEN` en variable d'environnement. Il s'appelle `/_internal/checks` et nécessite le token via `?token=...` ou l'en-tête `x-internal-token`.
+- Exemple d'appel sécurisé :
+
+```bash
+curl "https://your-domain.com/_internal/checks?token=$INTERNAL_HEALTH_TOKEN"
+```
+
+Cet endpoint retourne l'état de la connexion DB, la présence des colonnes (`devise`, `vue`, `textile_disponibilite`), la présence du placeholder d'image, si Redis est configuré et si Stripe est en mode test ou live. Aucune écriture n'est faite.

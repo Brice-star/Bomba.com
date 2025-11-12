@@ -1293,6 +1293,81 @@ process.on('unhandledRejection', (reason, promise) => {
     // process.exit(1);
 });
 
+// ==================== INTERNAL READ-ONLY HEALTH CHECK (PROTECTED) ====================
+// This endpoint is intentionally read-only and requires a one-time token set
+// in `INTERNAL_HEALTH_TOKEN` environment variable. It helps validate DB
+// connectivity, presence of the new columns, placeholder image availability,
+// and basic config (Stripe/Redis). No writes are performed.
+if (process.env.INTERNAL_HEALTH_TOKEN) {
+    app.get('/_internal/checks', async (req, res) => {
+        try {
+            const token = req.query.token || req.headers['x-internal-token'];
+            if (!token || token !== process.env.INTERNAL_HEALTH_TOKEN) {
+                return res.status(401).json({ ok: false, error: 'unauthorized' });
+            }
+
+            const checks = {
+                db: { ok: false },
+                columns: {},
+                placeholderImage: false,
+                stripe: { present: false, mode: 'unknown' },
+                redis: { configured: !!process.env.REDIS_URL }
+            };
+
+            // DB connectivity and sample counts
+            try {
+                const [pRows] = await db.query('SELECT COUNT(*) AS c FROM produits LIMIT 1');
+                const [oRows] = await db.query('SELECT COUNT(*) AS c FROM commandes LIMIT 1');
+                checks.db.ok = true;
+                checks.db.produits = pRows && pRows[0] ? Number(pRows[0].c) : 0;
+                checks.db.commandes = oRows && oRows[0] ? Number(oRows[0].c) : 0;
+            } catch (err) {
+                checks.db.ok = false;
+                checks.db.error = err && err.message ? err.message : String(err);
+            }
+
+            // Check that columns exist
+            try {
+                const cols = ['devise', 'vue'];
+                for (const col of cols) {
+                    const [r] = await db.query(
+                        "SELECT COUNT(*) AS c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'commandes' AND COLUMN_NAME = ?",
+                        [col]
+                    );
+                    checks.columns[col] = !!(r && r[0] && r[0].c > 0);
+                }
+                const [r2] = await db.query(
+                    "SELECT COUNT(*) AS c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'produits' AND COLUMN_NAME = 'textile_disponibilite'"
+                );
+                checks.columns['textile_disponibilite'] = !!(r2 && r2[0] && r2[0].c > 0);
+            } catch (err) {
+                checks.columns_error = err && err.message ? err.message : String(err);
+            }
+
+            // Placeholder image
+            try {
+                const placeholder = path.join(__dirname, 'public', 'images', 'products', 'placeholder.svg');
+                checks.placeholderImage = fs.existsSync(placeholder);
+            } catch (err) {
+                checks.placeholder_error = err && err.message ? err.message : String(err);
+            }
+
+            // Stripe mode
+            if (process.env.STRIPE_SECRET_KEY) {
+                checks.stripe.present = true;
+                checks.stripe.mode = process.env.STRIPE_SECRET_KEY.startsWith('sk_live') ? 'live' : 'test';
+            }
+
+            checks.redis.configured = !!process.env.REDIS_URL;
+
+            return res.json({ ok: true, checks });
+        } catch (err) {
+            console.error('Internal checks failed:', err && err.message ? err.message : err);
+            return res.status(500).json({ ok: false, error: err && err.message ? err.message : String(err) });
+        }
+    });
+}
+
 // ==================== DÉMARRAGE DU SERVEUR ====================
 
 // Run lightweight, safe migrations at startup. This runs inside the platform
