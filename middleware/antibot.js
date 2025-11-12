@@ -4,6 +4,16 @@
 
 // Middleware de détection de bot basé sur le comportement
 const botDetection = (req, res, next) => {
+    // Quick skip for static assets and health checks to avoid blocking image/file requests
+    try {
+        const p = (req.path || req.url || '').toLowerCase();
+        const staticPrefixes = ['/images', '/img', '/css', '/js', '/public', '/fonts', '/favicon.ico', '/sitemap.xml'];
+        if (staticPrefixes.some(pref => p.startsWith(pref))) return next();
+        if (p === '/health' || p.startsWith('/health')) return next();
+    } catch (e) {
+        // ignore
+    }
+
     // Skip pour localhost en développement
     if (process.env.NODE_ENV !== 'production') {
         const ip = req.ip || req.connection.remoteAddress;
@@ -148,6 +158,15 @@ const generateToken = (req, res, next) => {
 
 // Détection de comportement suspect (patterns d'attaque)
 const behaviorAnalysis = (req, res, next) => {
+    // Skip static assets and health
+    try {
+        const p = (req.path || req.url || '').toLowerCase();
+        const staticPrefixes = ['/images', '/img', '/css', '/js', '/public', '/fonts', '/favicon.ico', '/sitemap.xml'];
+        if (staticPrefixes.some(pref => p.startsWith(pref))) return next();
+        if (p === '/health' || p.startsWith('/health')) return next();
+    } catch (e) {
+        // ignore
+    }
     const suspicious = [];
 
     // Vérifier les patterns SQL dans les URLs
