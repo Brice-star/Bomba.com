@@ -1371,11 +1371,4 @@ ensureSchema().finally(() => {
     });
 });
 
-// Empêcher le serveur de se fermer automatiquement
-server.on('close', () => {
-    console.log('⚠️ Serveur fermé');
-});
-
-server.on('error', (error) => {
-    console.error('❌ Erreur serveur:', error);
-});
+// (server lifecycle handlers are attached when the server is created above)
