@@ -44,10 +44,12 @@ ON DUPLICATE KEY UPDATE
     nombre_visites = VALUES(nombre_visites),
     visiteurs_uniques = VALUES(visiteurs_uniques);
 
--- Mettre à jour les auto_increment
 ALTER TABLE admin MODIFY id INT NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 ALTER TABLE commandes MODIFY id INT NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
-ALTER TABLE produits MODIFY id INT NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+-- Ajout des colonnes manquantes pour compatibilité avec le code
+ALTER TABLE commandes ADD COLUMN IF NOT EXISTS devise VARCHAR(10);
+ALTER TABLE commandes ADD COLUMN IF NOT EXISTS vue BOOLEAN DEFAULT FALSE;
+ALTER TABLE produits ADD COLUMN IF NOT EXISTS textile_disponibilite TEXT;
 ALTER TABLE sessions_visiteurs MODIFY id INT NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 ALTER TABLE statistiques_visites MODIFY id INT NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=389;
 

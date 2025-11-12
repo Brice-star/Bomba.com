@@ -1,0 +1,5 @@
+id,nom,image_principale,categorie,reason,expected_path
+1,"Ensemble Traditionnel Homme Beige","/images/products/african-american-woman-wearing-brown-long-sleeve-shirt-with-white-culotte-pants-1762786393071-98500933.jpg","Hommes",file missing,"public\images\products\images\products\african-american-woman-wearing-brown-long-sleeve-shirt-with-white-culotte-pants-1762786393071-98500933.jpg"
+2,"Robe Africaine Moderne Femme","/images/products/african-american-woman-wearing-brown-long-sleeve-shirt-with-white-culotte-pants-1762786393071-98500933.jpg","Femmes",file missing,"public\images\products\images\products\african-american-woman-wearing-brown-long-sleeve-shirt-with-white-culotte-pants-1762786393071-98500933.jpg"
+6,"Bomba Beninese LD","/images/products/bombabeninese.jpg","Femmes",file missing,"public\images\products\images\products\bombabeninese.jpg"
+7,"Bomba Lyne's","/images/products/african-woman-studio-white-wall-woman-blue-dress-1762786599319-306118573.jpg","Femmes",file missing,"public\images\products\images\products\african-woman-studio-white-wall-woman-blue-dress-1762786599319-306118573.jpg"
