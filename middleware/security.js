@@ -217,4 +217,7 @@ module.exports = {
     sanitizeData,
     validateInput,
     securityLogger
+    ,
+    // Export helper so other modules (server) can decide to skip security checks for static assets
+    isStaticAsset
 };

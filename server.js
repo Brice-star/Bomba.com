@@ -118,14 +118,25 @@ app.use(session(sessionOptions));
 // IMPORTANT: Ces middlewares doivent être après la session car ils utilisent req.session
 // Activé uniquement en production pour éviter les faux positifs en développement
 if (config.isProduction) {
-    // Blacklist IP
-    app.use(antibot.ipBlacklist);
+    // Exempt static asset requests and health check from anti-bot middleware to avoid blocking
+    // legitimate visitors and automated probes that don't execute JS.
+    app.use((req, res, next) => {
+        try {
+            if (security.isStaticAsset(req)) return next();
+        } catch (e) {
+            console.warn('⚠️ Error checking static asset exemption for anti-bot:', e && e.message ? e.message : e);
+        }
 
-    // Détection de bots par User-Agent et comportement
-    app.use(antibot.botDetection);
-
-    // Analyse comportementale (détection patterns d'attaque)
-    app.use(antibot.behaviorAnalysis);
+        // Call anti-bot middlewares in sequence for non-static requests.
+        // We avoid calling app.use() here to prevent registering middleware on every request.
+        antibot.ipBlacklist(req, res, (err) => {
+            if (err) return next(err);
+            antibot.botDetection(req, res, (err2) => {
+                if (err2) return next(err2);
+                antibot.behaviorAnalysis(req, res, next);
+            });
+        });
+    });
     
     console.log('🛡️ Anti-bot activé (Production)');
 } else {
