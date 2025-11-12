@@ -278,7 +278,24 @@ app.get('/api/produits', async (req, res) => {
         query += ' ORDER BY date_ajout DESC';
 
         const [produits] = await db.query(query, params);
-        res.json(produits);
+        // Ensure image paths exist; if not, replace with placeholder
+        const safeProduits = produits.map(p => {
+            try {
+                const img = p.image_principale || '';
+                const imagePath = img.startsWith('/') ? img : `/images/products/${img}`;
+                const fileOnDisk = path.join(__dirname, 'public', imagePath.replace(/^\//, ''));
+                if (!fs.existsSync(fileOnDisk)) {
+                    p.image_principale = '/images/products/placeholder.svg';
+                } else {
+                    p.image_principale = imagePath;
+                }
+            } catch (e) {
+                p.image_principale = '/images/products/placeholder.svg';
+            }
+            return p;
+        });
+
+        res.json(safeProduits);
     } catch (error) {
         console.error('Erreur récupération produits:', error);
         res.status(500).json({ error: 'Erreur serveur' });
@@ -294,7 +311,19 @@ app.get('/api/produits/:id', async (req, res) => {
             return res.status(404).json({ error: 'Produit non trouvé' });
         }
         
-        res.json(produits[0]);
+        // Safe image fallback
+        const prod = produits[0];
+        try {
+            const img = prod.image_principale || '';
+            const imagePath = img.startsWith('/') ? img : `/images/products/${img}`;
+            const fileOnDisk = path.join(__dirname, 'public', imagePath.replace(/^\//, ''));
+            if (!fs.existsSync(fileOnDisk)) prod.image_principale = '/images/products/placeholder.svg';
+            else prod.image_principale = imagePath;
+        } catch (e) {
+            prod.image_principale = '/images/products/placeholder.svg';
+        }
+
+        res.json(prod);
     } catch (error) {
         console.error('Erreur récupération produit:', error);
         res.status(500).json({ error: 'Erreur serveur' });
